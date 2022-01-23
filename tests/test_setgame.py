@@ -1,6 +1,7 @@
 from itertools import product
-from setgame import Card, Game, Number, Color, Shading, Shape
 import pytest
+
+from setgame.setgame import Card, Game, Number, Color, Shading, Shape
 
 @pytest.fixture
 def at_least_one_set_in_first_twelve_cards():
