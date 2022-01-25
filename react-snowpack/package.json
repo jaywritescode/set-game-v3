@@ -6,6 +6,7 @@
   },
   "devDependencies": {
     "@snowpack/plugin-react-refresh": "^2.5.0",
+    "prettier": "2.5.1",
     "snowpack": "^3.3.7"
   },
   "dependencies": {
