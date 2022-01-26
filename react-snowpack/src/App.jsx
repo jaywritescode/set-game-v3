@@ -2,7 +2,26 @@ import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+const ws = new WebSocket("ws://localhost:3001");
+ws.onopen = (e) => {
+  console.log("[open] connection established");
+  ws.send("hello");
+}
+
+ws.onerror = (e) => {
+  console.error('error', e.message);
+}
+
 function App() {
+  const [board, setBoard] = useState([]);
+  
+  if (!board.length) {
+    return (
+      <button>start game</button>
+    );
+  }
+  
+  
   // Create the count state.
   const [count, setCount] = useState(0);
   // Update the count (+1 every second).

@@ -1,15 +1,18 @@
 from starlette.applications import Starlette
-from starlette.responses import PlainTextResponse
-from starlette.routing import Route
-import uvicorn
+from starlette.endpoints import WebSocketEndpoint
+from starlette.routing import WebSocketRoute
 
-async def index(request):
-    return PlainTextResponse("hello world!")
+from setgame.setgame import Game
+from web.serialize import BoardSchema
 
-app = Starlette(debug=True, routes=[
-    Route('/', index)
-])
+class Echo(WebSocketEndpoint):
+    encoding = "text"
+    async def on_connect(self, websocket):
+        await websocket.accept()
+    async def on_receive(self, websocket, data):
+        await websocket.send_text(f"Message text was: {data}")
+    async def on_disconnect(self, websocket, close_code):
+        pass
 
 
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+app = Starlette(debug=True, routes=[WebSocketRoute('/', Echo)])
