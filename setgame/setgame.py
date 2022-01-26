@@ -56,6 +56,9 @@ class Game:
         self.board = []
 
     def start(self):
+        if self.is_started():
+            return
+
         self.shuffler(self.cards)
         self.cards = deque(self.cards)
         
@@ -74,6 +77,9 @@ class Game:
 
     def has_set(self):
         return contains_set(self.board)
+
+    def is_started(self):
+        return self.board
 
 
 if __name__ == '__main__':

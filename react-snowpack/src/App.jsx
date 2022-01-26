@@ -11,11 +11,18 @@ function App() {
 
     websocket.onopen = (e) => {
       console.log("[open] connection established");
-      websocket.send("hello");
+      websocket.send(JSON.stringify({ action: 'init', }));
     };
 
     websocket.onmessage = (e) => {
       console.log(`message received from server: ${e.data}`);
+      const response = JSON.parse(e.data);
+      
+      switch (response.action) {
+        case 'start':
+          setBoard(response.board);
+          break;
+      }
     };
 
     websocket.onclose = (e) => {
@@ -32,32 +39,21 @@ function App() {
 
     return () => websocket.close(1000, "Done");
   });
+
+  const onStartClicked = () => {
+    console.log('onStartClicked');
+    websocket.send(JSON.stringify({ action: 'start', }));
+  }
   
   if (!board.length) {
     return (
-      <button>start game</button>
+      <button onClick={onStartClicked}>start game</button>
     );
   }
-  
-  
-  // Create the count state.
-  const [count, setCount] = useState(0);
-  // Update the count (+1 every second).
-  useEffect(() => {
-    const timer = setTimeout(() => setCount(count + 1), 1000);
-    return () => clearTimeout(timer);
-  }, [count, setCount]);
-  // Return the App component.
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Page has been open for <code>{count}</code> seconds.
-        </p>
-        <img src={logo} className="App-logo" alt="logo" />
-      </header>
-    </div>
-  );
+    <>not empty</>
+  )
 }
 
 export default App;

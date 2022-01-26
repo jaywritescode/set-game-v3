@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 starlette = "*"
+marshmallow = "*"
+marshmallow-dataclass = {extras = ["enum"], version = "*"}
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 pytest = "*"
