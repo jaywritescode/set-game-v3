@@ -23,7 +23,7 @@ class Card:
         return sum(getattr(self, field.name).value * (3 ** i) for (i, field) in enumerate(fields(Card)))
 
     def __str__(self):
-        return f"{self.number}, {self.color}, {self.shading}, {self.shape}"
+        return '-'.join(e.name for e in [self.number, self.color, self.shading, self.shape]).lower()
 
 
 def complete_set(c, d):
