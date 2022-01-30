@@ -49,11 +49,15 @@ function App() {
     return (
       <button onClick={onStartClicked}>start game</button>
     );
+  } else {
+    return (
+      <>
+        {board.map(card => (
+          <div class={`card ${card}`}></div>
+        ))}
+      </>
+    )
   }
-
-  return (
-    <>not empty</>
-  )
 }
 
 export default App;
