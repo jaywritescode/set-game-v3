@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
+
 import "./App.css";
+import "./sprites.css";
 
 function App() {
   const [board, setBoard] = useState([]);
@@ -45,19 +46,20 @@ function App() {
     websocket.send(JSON.stringify({ action: 'start', }));
   }
   
-  if (!board.length) {
-    return (
-      <button onClick={onStartClicked}>start game</button>
-    );
-  } else {
-    return (
-      <>
-        {board.map(card => (
-          <div class={`card ${card}`}></div>
-        ))}
-      </>
-    )
-  }
+
+  return (
+    <div className="App">
+      {
+        board.length ? 
+          board.map(card => (
+            <div className={`card ${card}`} />
+          )) :
+          (
+            <button onClick={onStartClicked}>start game</button>
+          )
+      }
+    </div>
+  );
 }
 
 export default App;
