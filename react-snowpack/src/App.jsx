@@ -15,10 +15,11 @@ function App() {
       case 'start':
         return { board: zipObj(action.board, action.board.map(F)) };
       case 'select_card':
+        let newVal = !state.board[action.card];
         return { 
           board: {
             ...state.board, 
-            [action.card]: true 
+            [action.card]: newVal,
           } 
         };
     }
@@ -89,7 +90,7 @@ function App() {
             <button onClick={onStartClicked}>start game</button>
           ) :
           toPairs(state.board).map(([card, isSelected]) => (
-            <Card card={card} isSelected={isSelected} onClick={partial(onCardClicked, card)} />
+            <Card card={card} isSelected={isSelected} onClick={() => onCardClicked(card)} />
           ))
       }
     </div>
