@@ -84,15 +84,17 @@ function App() {
 
   return (
     <div className="app">
-      {
-        isEmpty(state.board) ?
-          (
-            <button onClick={onStartClicked}>start game</button>
-          ) :
-          toPairs(state.board).map(([card, isSelected]) => (
-            <Card card={card} isSelected={isSelected} onClick={() => onCardClicked(card)} />
-          ))
-      }
+      <div className="board">
+        {
+          isEmpty(state.board) ?
+            (
+              <button onClick={onStartClicked}>start game</button>
+            ) :
+            toPairs(state.board).map(([card, isSelected]) => (
+              <Card card={card} isSelected={isSelected} onClick={() => onCardClicked(card)} />
+            ))
+        }
+      </div>
     </div>
   );
 }
