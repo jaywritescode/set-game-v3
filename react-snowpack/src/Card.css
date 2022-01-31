@@ -2,3 +2,7 @@
     width: 240px;
     height: 150px;
 }
+
+.high-contrast-mode .card {
+    filter: brightness(1.5);
+}

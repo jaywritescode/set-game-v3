@@ -1,4 +1,5 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useState } from "react";
+import classNames from "classnames";
 import { F, isEmpty, partial, toPairs, zipObj } from "ramda";
 import Card from "./Card";
 
@@ -8,6 +9,8 @@ let websocket;
 
 function App() {
   const [state, dispatch] = useReducer(reducer, { board: Object.create(null) });
+  
+  const [highContrastMode, setHighContrastMode] = useState(false);
 
   function reducer(state, action) {
     switch (action.type) {
@@ -83,7 +86,9 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={classNames('app', { 'high-contrast-mode': highContrastMode })}>
+      <input id="high-contrast-mode" type="checkbox" onClick={() => setHighContrastMode(!highContrastMode)} />
+      <label htmlFor="high-contrast-mode">I'm colorblind!</label>
       <div className="board">
         {
           isEmpty(state.board) ?
