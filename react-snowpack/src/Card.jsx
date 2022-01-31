@@ -5,7 +5,7 @@ import "./sprites.css";
 
 function Card(props) {
   return (
-    <div className={`card ${props.card}`}></div>
+    <div className={`card ${props.card}`} onClick={props.onClick}></div>
   )
 }
 

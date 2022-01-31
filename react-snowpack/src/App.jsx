@@ -5,6 +5,7 @@ import "./App.css";
 
 function App() {
   const [board, setBoard] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   let websocket;
   useEffect(() => {
@@ -45,6 +46,19 @@ function App() {
     console.log('onStartClicked');
     websocket.send(JSON.stringify({ action: 'start', }));
   }
+
+  const onCardClicked = (card) => {
+    console.log('onCardClicked: ', card);
+
+    let updated;
+    if (selected.includes(card)) {
+      updated = [...selected].filter(c => c != card);
+    } else {
+      updated = [card, ...selected];
+    }
+
+    setSelected(updated);
+  }
   
 
   return (
@@ -52,7 +66,7 @@ function App() {
       {
         board.length ? 
           board.map(card => (
-            <Card card={card} />
+            <Card card={card} selected={selected.includes(card)} onClick={() => onCardClicked(card)} />
           )) :
           (
             <button onClick={onStartClicked}>start game</button>
