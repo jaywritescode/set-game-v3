@@ -1,10 +1,11 @@
 import React, { useReducer, useEffect } from "react";
-import { F, identity, toPairs, values, zipObj } from "ramda";
+import { F, isEmpty, partial, toPairs, zipObj } from "ramda";
 import Card from "./Card";
 
 import "./App.css";
 
 let websocket;
+
 function App() {
   const [state, dispatch] = useReducer(reducer, { board: Object.create(null) });
 
@@ -83,13 +84,13 @@ function App() {
   return (
     <div className="App">
       {
-        state.board.length ? 
-          state.board.map(card => (
-            <Card card={card} selected={selected.includes(card)} onClick={() => onCardClicked(card)} />
-          )) :
+        isEmpty(state.board) ?
           (
             <button onClick={onStartClicked}>start game</button>
-          )
+          ) :
+          toPairs(state.board).map(([card, isSelected]) => (
+            <Card card={card} isSelected={isSelected} onClick={partial(onCardClicked, card)} />
+          ))
       }
     </div>
   );
