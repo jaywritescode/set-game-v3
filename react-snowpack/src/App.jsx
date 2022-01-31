@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Card from "./Card";
 
 import "./App.css";
-import "./sprites.css";
 
 function App() {
   const [board, setBoard] = useState([]);
@@ -52,7 +52,7 @@ function App() {
       {
         board.length ? 
           board.map(card => (
-            <div className={`card ${card}`} />
+            <Card card={card} />
           )) :
           (
             <button onClick={onStartClicked}>start game</button>
