@@ -23,12 +23,13 @@ class Echo(WebSocketEndpoint):
         }
 
         args = json.loads(data)
-        if args['action'] not in actions.keys():
+        action_type = args['type']
+        if action_type not in actions.keys():
             # error handling
             pass
 
-        response = actions[args['action']]()
-        response.update(args)
+        response = actions[action_type]()
+        response.update({ 'type': action_type })
 
         await websocket.send_json(response)
     

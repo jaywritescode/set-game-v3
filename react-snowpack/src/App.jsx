@@ -1,30 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
+import { F, identity, toPairs, values, zipObj } from "ramda";
 import Card from "./Card";
 
 import "./App.css";
 
+let websocket;
 function App() {
-  const [board, setBoard] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [state, dispatch] = useReducer(reducer, { board: Object.create(null) });
 
-  let websocket;
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'init':
+      case 'start':
+        return { board: zipObj(action.board, action.board.map(F)) };
+      case 'select_card':
+        return { 
+          board: {
+            ...state.board, 
+            [action.card]: true 
+          } 
+        };
+    }
+  }
+
   useEffect(() => {
+    console.log('useEffect: page inited');
+
     websocket = new WebSocket("ws://localhost:3001");
 
     websocket.onopen = (e) => {
       console.log("[open] connection established");
-      websocket.send(JSON.stringify({ action: 'init', }));
+      websocket.send(JSON.stringify({ type: 'init', }));
     };
 
     websocket.onmessage = (e) => {
       console.log(`message received from server: ${e.data}`);
       const response = JSON.parse(e.data);
-      
-      switch (response.action) {
-        case 'start':
-          setBoard(response.board);
-          break;
-      }
+
+      dispatch(response);
     };
 
     websocket.onclose = (e) => {
@@ -40,32 +53,38 @@ function App() {
     };
 
     return () => websocket.close(1000, "Done");
-  });
+  }, []);
+
+  useEffect(() => {
+    console.log('useEffect: card selected');
+
+    const selected = toPairs(state.board).filter(([_, isSelected]) => isSelected).map(([card, _]) => card);
+    if (selected.length == 3) {
+      websocket.send(JSON.stringify({
+        type: 'submit',
+        cards: selected
+      }));
+    }
+  }, [state.board]);
 
   const onStartClicked = () => {
     console.log('onStartClicked');
-    websocket.send(JSON.stringify({ action: 'start', }));
+    websocket.send(JSON.stringify({ type: 'start', }));
   }
 
   const onCardClicked = (card) => {
-    console.log('onCardClicked: ', card);
-
-    let updated;
-    if (selected.includes(card)) {
-      updated = [...selected].filter(c => c != card);
-    } else {
-      updated = [card, ...selected];
-    }
-
-    setSelected(updated);
+    console.log("onCardClicked: ", card);
+    dispatch({ 
+      type: 'select_card',
+      card,
+    });
   }
-  
 
   return (
     <div className="App">
       {
-        board.length ? 
-          board.map(card => (
+        state.board.length ? 
+          state.board.map(card => (
             <Card card={card} selected={selected.includes(card)} onClick={() => onCardClicked(card)} />
           )) :
           (
