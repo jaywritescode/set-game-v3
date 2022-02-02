@@ -45,6 +45,9 @@ def find_set(cards):
         if k in cards:
             return (pair[0], pair[1], k)
 
+def deck():
+    return [Card(*attrs) for attrs in product(Number, Color, Shading, Shape)]
+
 
 class Game:
     def __init__(self, shuffler=shuffle):
@@ -52,7 +55,7 @@ class Game:
         self.shuffler = shuffler
 
     def reset(self):
-        self.cards = [Card(*attrs) for attrs in product(Number, Color, Shading, Shape)]
+        self.cards = deck()
         self.board = []
 
     def start(self):

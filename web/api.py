@@ -1,14 +1,24 @@
 import json
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
-from starlette.routing import WebSocketRoute
+from starlette.routing import Mount, Route, WebSocketRoute
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
 
-from setgame.setgame import Game
+from setgame.setgame import Game, deck
 from web.serialize import BoardSchema
 
 game = Game()
 
+templates = Jinja2Templates(directory='templates', extensions=['jinja2.ext.debug'])
+
 board_schema = BoardSchema()
+
+async def index(request):
+    return templates.TemplateResponse('index.html.jinja', {
+        'deck': deck(),
+        'request': request 
+    })
 
 class Echo(WebSocketEndpoint):
     encoding = "text"
@@ -44,4 +54,8 @@ class Echo(WebSocketEndpoint):
         return board_schema.dump(game)
 
 
-app = Starlette(debug=True, routes=[WebSocketRoute('/', Echo)])
+app = Starlette(debug=True, routes=[
+    Route('/', index), 
+    WebSocketRoute('/', Echo),
+    Mount('/static', StaticFiles(directory='static'), name="static")
+])

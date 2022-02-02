@@ -8,6 +8,7 @@ starlette = "*"
 marshmallow = "*"
 marshmallow-dataclass = {extras = ["enum"], version = "*"}
 uvicorn = {extras = ["standard"], version = "*"}
+jinja2 = "*"
 
 [dev-packages]
 pytest = "*"
