@@ -15,3 +15,13 @@ def test_init_no_game():
         
         data = websocket.receive_json()
         assert data == { 'type': 'init', 'board': [] }
+
+def test_start_game_not_started():
+    client = TestClient(app)
+    with client.websocket_connect('/') as websocket:
+        websocket.send_json({ 'type': 'init' })
+        websocket.receive_json()
+
+        websocket.send_json({ 'type': 'start' })
+        data = websocket.receive_json()
+        assert data == { 'type': 'start' }

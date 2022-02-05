@@ -58,8 +58,7 @@ class Api(WebSocketEndpoint):
         return board_schema.dump(self.game)
 
     def do_start(self, **kwargs):
-        if self.game is None:
-            self.game = Game()
+        if not self.game.is_started():
             self.game.start()
         
         return board_schema.dump(self.game)
