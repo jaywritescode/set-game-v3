@@ -3,6 +3,10 @@
   background-repeat: no-repeat;
 }
 
+.isSelected {
+  border: 1px solid black;
+}
+
 .high-contrast-mode .card {
   filter: brightness(1.5);
 }
