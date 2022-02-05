@@ -8,8 +8,6 @@ from starlette.templating import Jinja2Templates
 from setgame.setgame import Game, deck
 from web.serialize import BoardSchema
 
-game = Game()
-
 templates = Jinja2Templates(directory='templates', extensions=['jinja2.ext.debug'])
 
 board_schema = BoardSchema()
@@ -20,7 +18,7 @@ async def index(request):
         'request': request 
     })
 
-class Echo(WebSocketEndpoint):
+class Api(WebSocketEndpoint):
     encoding = "text"
 
     async def on_connect(self, websocket):
@@ -30,32 +28,47 @@ class Echo(WebSocketEndpoint):
         actions = {
             'init': self.do_init,
             'start': self.do_start,
+            'submit': self.do_submit,
         }
 
-        args = json.loads(data)
+        try:
+            args = json.loads(data)
+        except:
+            await websocket.send_text('not json')
+            return
+
         action_type = args['type']
         if action_type not in actions.keys():
             # error handling
             pass
 
-        response = actions[action_type]()
+        response = actions[action_type](self, **args)
         response.update({ 'type': action_type })
 
         await websocket.send_json(response)
-    
+          
     async def on_disconnect(self, websocket, close_code):
-        pass
+        return await super().on_disconnect(websocket, close_code)
 
-    def do_init(self):
-        return board_schema.dump(game)
+    def do_init(self, **kwargs):
+        if self.game is None:
+            return dict()
 
-    def do_start(self):
-        game.start()
-        return board_schema.dump(game)
+        return board_schema.dump(self.game)
+
+    def do_start(self, **kwargs):
+        if self.game is None:
+            self.game = Game()
+            self.game.start()
+        
+        return board_schema.dump(self.game)
+
+    def do_submit(self, **kwargs):
+        cards = kwargs['cards']
 
 
 app = Starlette(debug=True, routes=[
     Route('/', index), 
-    WebSocketRoute('/', Echo),
+    WebSocketRoute('/', Api),
     Mount('/build', StaticFiles(directory='build'), name="static")
 ])
