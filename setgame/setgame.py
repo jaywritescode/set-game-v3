@@ -86,11 +86,18 @@ class Game:
 
 
 if __name__ == '__main__':
-    g = Game()
-    # for c in g.cards:
-    #     print(c)
+    import marshmallow_dataclass
+    from pprint import pprint
+    
+    deck = deck()
+    shuffle(deck)
 
-    shuffle(g.cards)
-    print([str(x) for x in g.cards[:12]])
-    if contains_set(g.cards[:12]):
-        print(find_set(g.cards[:12]))
+    CardSchema = marshmallow_dataclass.class_schema(Card)()
+
+    s = find_set(deck[:12])
+    if s:
+        # pprint(CardSchema.dump(s))
+        # print("=============================================")
+        print(CardSchema.dumps(deck, many=True))
+    else:
+        print("Try again")

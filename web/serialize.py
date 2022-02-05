@@ -1,6 +1,5 @@
-from marshmallow import Schema, fields, pre_load
+from marshmallow import Schema, fields
 import marshmallow_dataclass
-from marshmallow_enum import EnumField
 
 from setgame.setgame import Card
 
