@@ -1,11 +1,15 @@
 import React from "react";
 
 import "./Card.css";
-import "./sprites.css";
+
 
 function Card(props) {
+  const style={
+    backgroundImage: `url(cards/${props.card}.png)`
+  };
+
   return (
-    <div className={`card ${props.card}`} onClick={props.onClick}></div>
+    <div className="card column" style={style} />
   )
 }
 

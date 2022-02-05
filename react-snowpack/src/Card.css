@@ -1,6 +1,6 @@
 .card {
-    width: 240px;
-    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .high-contrast-mode .card {

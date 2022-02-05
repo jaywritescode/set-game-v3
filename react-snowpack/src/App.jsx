@@ -1,9 +1,10 @@
 import React, { useReducer, useEffect, useState } from "react";
 import classNames from "classnames";
-import { F, isEmpty, partial, toPairs, zipObj } from "ramda";
+import { F, isEmpty, partial, splitEvery, toPairs, zipObj } from "ramda";
 import Card from "./Card";
 
 import "./App.css";
+import "milligram";
 
 let websocket;
 
@@ -89,14 +90,18 @@ function App() {
     <div className={classNames('app', { 'high-contrast-mode': highContrastMode })}>
       <input id="high-contrast-mode" type="checkbox" onClick={() => setHighContrastMode(!highContrastMode)} />
       <label htmlFor="high-contrast-mode">I'm colorblind!</label>
-      <div className="board">
+      <div className="board container">
         {
           isEmpty(state.board) ?
             (
               <button onClick={onStartClicked}>start game</button>
             ) :
-            toPairs(state.board).map(([card, isSelected]) => (
-              <Card card={card} isSelected={isSelected} onClick={() => onCardClicked(card)} />
+            splitEvery(3, toPairs(state.board)).map(triple => (
+              <div className="row card-row">
+                {triple.map(([card, isSelected]) => (
+                  <Card card={card} isSelected={isSelected} onClick={() => onCardClicked(card)} />
+                ))}
+              </div>
             ))
         }
       </div>

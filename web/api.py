@@ -57,5 +57,5 @@ class Echo(WebSocketEndpoint):
 app = Starlette(debug=True, routes=[
     Route('/', index), 
     WebSocketRoute('/', Echo),
-    Mount('/static', StaticFiles(directory='static'), name="static")
+    Mount('/build', StaticFiles(directory='build'), name="static")
 ])
