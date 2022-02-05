@@ -20,7 +20,7 @@ export default {
     /* ... */
   },
   buildOptions: {
-    out: '../build',
-    sourcemap: true
+    out: "../build",
+    sourcemap: true,
   },
 };

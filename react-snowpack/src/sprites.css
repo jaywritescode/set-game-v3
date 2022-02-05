@@ -1,82 +1,246 @@
-.card { background-image: url("dist/sprites.png"); }
-.three-blue-striped-squiggle { background-position: top 0px left 0px; }
-.one-blue-striped-diamond { background-position: top 0px left -240px; }
-.one-green-striped-oval { background-position: top 0px left -480px; }
-.three-green-striped-squiggle { background-position: top -150px left 0px; }
-.one-blue-empty-squiggle { background-position: top -150px left -240px; }
-.one-green-striped-diamond { background-position: top -150px left -480px; }
-.one-blue-solid-oval { background-position: top -300px left 0px; }
-.three-green-solid-diamond { background-position: top -300px left -240px; }
-.one-blue-solid-diamond { background-position: top -300px left -480px; }
-.one-green-striped-squiggle { background-position: top -450px left 0px; }
-.two-green-empty-oval { background-position: top -450px left -240px; }
-.two-green-empty-diamond { background-position: top -450px left -480px; }
-.two-red-empty-oval { background-position: top -600px left 0px; }
-.three-green-empty-squiggle { background-position: top -600px left -240px; }
-.one-red-striped-squiggle { background-position: top -600px left -480px; }
-.two-blue-solid-squiggle { background-position: top -750px left 0px; }
-.three-red-empty-oval { background-position: top -750px left -240px; }
-.two-green-solid-squiggle { background-position: top -750px left -480px; }
-.three-red-striped-squiggle { background-position: top -900px left 0px; }
-.one-blue-empty-oval { background-position: top -900px left -240px; }
-.two-red-striped-oval { background-position: top -900px left -480px; }
-.one-green-solid-diamond { background-position: top -1050px left 0px; }
-.two-red-striped-diamond { background-position: top -1050px left -240px; }
-.two-green-striped-diamond { background-position: top -1050px left -480px; }
-.one-green-empty-squiggle { background-position: top -1200px left 0px; }
-.two-blue-empty-diamond { background-position: top -1200px left -240px; }
-.three-blue-empty-squiggle { background-position: top -1200px left -480px; }
-.two-red-solid-squiggle { background-position: top -1350px left 0px; }
-.one-red-solid-diamond { background-position: top -1350px left -240px; }
-.three-red-solid-oval { background-position: top -1350px left -480px; }
-.three-red-solid-squiggle { background-position: top -1500px left 0px; }
-.three-blue-empty-diamond { background-position: top -1500px left -240px; }
-.three-blue-striped-diamond { background-position: top -1500px left -480px; }
-.two-green-solid-oval { background-position: top -1650px left 0px; }
-.three-red-solid-diamond { background-position: top -1650px left -240px; }
-.one-red-empty-squiggle { background-position: top -1650px left -480px; }
-.two-red-solid-diamond { background-position: top -1800px left 0px; }
-.two-red-solid-oval { background-position: top -1800px left -240px; }
-.one-red-striped-diamond { background-position: top -1800px left -480px; }
-.one-red-solid-oval { background-position: top -1950px left 0px; }
-.two-blue-striped-diamond { background-position: top -1950px left -240px; }
-.one-blue-striped-oval { background-position: top -1950px left -480px; }
-.three-red-empty-squiggle { background-position: top -2100px left 0px; }
-.two-green-striped-squiggle { background-position: top -2100px left -240px; }
-.three-blue-striped-oval { background-position: top -2100px left -480px; }
-.two-blue-striped-oval { background-position: top -2250px left 0px; }
-.one-red-solid-squiggle { background-position: top -2250px left -240px; }
-.one-green-solid-oval { background-position: top -2250px left -480px; }
-.one-blue-empty-diamond { background-position: top -2400px left 0px; }
-.three-blue-solid-oval { background-position: top -2400px left -240px; }
-.two-green-solid-diamond { background-position: top -2400px left -480px; }
-.two-blue-striped-squiggle { background-position: top -2550px left 0px; }
-.three-green-empty-diamond { background-position: top -2550px left -240px; }
-.two-blue-empty-oval { background-position: top -2550px left -480px; }
-.one-red-striped-oval { background-position: top -2700px left 0px; }
-.two-red-striped-squiggle { background-position: top -2700px left -240px; }
-.three-green-empty-oval { background-position: top -2700px left -480px; }
-.one-green-solid-squiggle { background-position: top -2850px left 0px; }
-.two-red-empty-squiggle { background-position: top -2850px left -240px; }
-.three-blue-solid-squiggle { background-position: top -2850px left -480px; }
-.two-red-empty-diamond { background-position: top -3000px left 0px; }
-.three-red-empty-diamond { background-position: top -3000px left -240px; }
-.three-blue-empty-oval { background-position: top -3000px left -480px; }
-.two-green-striped-oval { background-position: top -3150px left 0px; }
-.three-green-solid-squiggle { background-position: top -3150px left -240px; }
-.one-green-empty-oval { background-position: top -3150px left -480px; }
-.three-red-striped-diamond { background-position: top -3300px left 0px; }
-.three-blue-solid-diamond { background-position: top -3300px left -240px; }
-.one-red-empty-oval { background-position: top -3300px left -480px; }
-.two-blue-empty-squiggle { background-position: top -3450px left 0px; }
-.three-red-striped-oval { background-position: top -3450px left -240px; }
-.two-green-empty-squiggle { background-position: top -3450px left -480px; }
-.one-red-empty-diamond { background-position: top -3600px left 0px; }
-.two-blue-solid-diamond { background-position: top -3600px left -240px; }
-.one-blue-striped-squiggle { background-position: top -3600px left -480px; }
-.three-green-solid-oval { background-position: top -3750px left 0px; }
-.one-blue-solid-squiggle { background-position: top -3750px left -240px; }
-.two-blue-solid-oval { background-position: top -3750px left -480px; }
-.one-green-empty-diamond { background-position: top -3900px left 0px; }
-.three-green-striped-diamond { background-position: top -3900px left -240px; }
-.three-green-striped-oval { background-position: top -3900px left -480px; }
+.card {
+  background-image: url("dist/sprites.png");
+}
+.three-blue-striped-squiggle {
+  background-position: top 0px left 0px;
+}
+.one-blue-striped-diamond {
+  background-position: top 0px left -240px;
+}
+.one-green-striped-oval {
+  background-position: top 0px left -480px;
+}
+.three-green-striped-squiggle {
+  background-position: top -150px left 0px;
+}
+.one-blue-empty-squiggle {
+  background-position: top -150px left -240px;
+}
+.one-green-striped-diamond {
+  background-position: top -150px left -480px;
+}
+.one-blue-solid-oval {
+  background-position: top -300px left 0px;
+}
+.three-green-solid-diamond {
+  background-position: top -300px left -240px;
+}
+.one-blue-solid-diamond {
+  background-position: top -300px left -480px;
+}
+.one-green-striped-squiggle {
+  background-position: top -450px left 0px;
+}
+.two-green-empty-oval {
+  background-position: top -450px left -240px;
+}
+.two-green-empty-diamond {
+  background-position: top -450px left -480px;
+}
+.two-red-empty-oval {
+  background-position: top -600px left 0px;
+}
+.three-green-empty-squiggle {
+  background-position: top -600px left -240px;
+}
+.one-red-striped-squiggle {
+  background-position: top -600px left -480px;
+}
+.two-blue-solid-squiggle {
+  background-position: top -750px left 0px;
+}
+.three-red-empty-oval {
+  background-position: top -750px left -240px;
+}
+.two-green-solid-squiggle {
+  background-position: top -750px left -480px;
+}
+.three-red-striped-squiggle {
+  background-position: top -900px left 0px;
+}
+.one-blue-empty-oval {
+  background-position: top -900px left -240px;
+}
+.two-red-striped-oval {
+  background-position: top -900px left -480px;
+}
+.one-green-solid-diamond {
+  background-position: top -1050px left 0px;
+}
+.two-red-striped-diamond {
+  background-position: top -1050px left -240px;
+}
+.two-green-striped-diamond {
+  background-position: top -1050px left -480px;
+}
+.one-green-empty-squiggle {
+  background-position: top -1200px left 0px;
+}
+.two-blue-empty-diamond {
+  background-position: top -1200px left -240px;
+}
+.three-blue-empty-squiggle {
+  background-position: top -1200px left -480px;
+}
+.two-red-solid-squiggle {
+  background-position: top -1350px left 0px;
+}
+.one-red-solid-diamond {
+  background-position: top -1350px left -240px;
+}
+.three-red-solid-oval {
+  background-position: top -1350px left -480px;
+}
+.three-red-solid-squiggle {
+  background-position: top -1500px left 0px;
+}
+.three-blue-empty-diamond {
+  background-position: top -1500px left -240px;
+}
+.three-blue-striped-diamond {
+  background-position: top -1500px left -480px;
+}
+.two-green-solid-oval {
+  background-position: top -1650px left 0px;
+}
+.three-red-solid-diamond {
+  background-position: top -1650px left -240px;
+}
+.one-red-empty-squiggle {
+  background-position: top -1650px left -480px;
+}
+.two-red-solid-diamond {
+  background-position: top -1800px left 0px;
+}
+.two-red-solid-oval {
+  background-position: top -1800px left -240px;
+}
+.one-red-striped-diamond {
+  background-position: top -1800px left -480px;
+}
+.one-red-solid-oval {
+  background-position: top -1950px left 0px;
+}
+.two-blue-striped-diamond {
+  background-position: top -1950px left -240px;
+}
+.one-blue-striped-oval {
+  background-position: top -1950px left -480px;
+}
+.three-red-empty-squiggle {
+  background-position: top -2100px left 0px;
+}
+.two-green-striped-squiggle {
+  background-position: top -2100px left -240px;
+}
+.three-blue-striped-oval {
+  background-position: top -2100px left -480px;
+}
+.two-blue-striped-oval {
+  background-position: top -2250px left 0px;
+}
+.one-red-solid-squiggle {
+  background-position: top -2250px left -240px;
+}
+.one-green-solid-oval {
+  background-position: top -2250px left -480px;
+}
+.one-blue-empty-diamond {
+  background-position: top -2400px left 0px;
+}
+.three-blue-solid-oval {
+  background-position: top -2400px left -240px;
+}
+.two-green-solid-diamond {
+  background-position: top -2400px left -480px;
+}
+.two-blue-striped-squiggle {
+  background-position: top -2550px left 0px;
+}
+.three-green-empty-diamond {
+  background-position: top -2550px left -240px;
+}
+.two-blue-empty-oval {
+  background-position: top -2550px left -480px;
+}
+.one-red-striped-oval {
+  background-position: top -2700px left 0px;
+}
+.two-red-striped-squiggle {
+  background-position: top -2700px left -240px;
+}
+.three-green-empty-oval {
+  background-position: top -2700px left -480px;
+}
+.one-green-solid-squiggle {
+  background-position: top -2850px left 0px;
+}
+.two-red-empty-squiggle {
+  background-position: top -2850px left -240px;
+}
+.three-blue-solid-squiggle {
+  background-position: top -2850px left -480px;
+}
+.two-red-empty-diamond {
+  background-position: top -3000px left 0px;
+}
+.three-red-empty-diamond {
+  background-position: top -3000px left -240px;
+}
+.three-blue-empty-oval {
+  background-position: top -3000px left -480px;
+}
+.two-green-striped-oval {
+  background-position: top -3150px left 0px;
+}
+.three-green-solid-squiggle {
+  background-position: top -3150px left -240px;
+}
+.one-green-empty-oval {
+  background-position: top -3150px left -480px;
+}
+.three-red-striped-diamond {
+  background-position: top -3300px left 0px;
+}
+.three-blue-solid-diamond {
+  background-position: top -3300px left -240px;
+}
+.one-red-empty-oval {
+  background-position: top -3300px left -480px;
+}
+.two-blue-empty-squiggle {
+  background-position: top -3450px left 0px;
+}
+.three-red-striped-oval {
+  background-position: top -3450px left -240px;
+}
+.two-green-empty-squiggle {
+  background-position: top -3450px left -480px;
+}
+.one-red-empty-diamond {
+  background-position: top -3600px left 0px;
+}
+.two-blue-solid-diamond {
+  background-position: top -3600px left -240px;
+}
+.one-blue-striped-squiggle {
+  background-position: top -3600px left -480px;
+}
+.three-green-solid-oval {
+  background-position: top -3750px left 0px;
+}
+.one-blue-solid-squiggle {
+  background-position: top -3750px left -240px;
+}
+.two-blue-solid-oval {
+  background-position: top -3750px left -480px;
+}
+.one-green-empty-diamond {
+  background-position: top -3900px left 0px;
+}
+.three-green-striped-diamond {
+  background-position: top -3900px left -240px;
+}
+.three-green-striped-oval {
+  background-position: top -3900px left -480px;
+}

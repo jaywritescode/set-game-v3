@@ -1,8 +1,8 @@
 .card {
-    background-size: contain;
-    background-repeat: no-repeat;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .high-contrast-mode .card {
-    filter: brightness(1.5);
+  filter: brightness(1.5);
 }
