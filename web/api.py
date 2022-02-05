@@ -21,6 +21,10 @@ async def index(request):
 class Api(WebSocketEndpoint):
     encoding = "text"
 
+    def __init__(self, scope, receive, send):
+        super().__init__(scope, receive=receive, send=send)
+        self.game = Game()
+
     async def on_connect(self, websocket):
         await websocket.accept()
     
@@ -42,7 +46,7 @@ class Api(WebSocketEndpoint):
             # error handling
             pass
 
-        response = actions[action_type](self, **args)
+        response = actions[action_type](**args)
         response.update({ 'type': action_type })
 
         await websocket.send_json(response)
@@ -51,9 +55,6 @@ class Api(WebSocketEndpoint):
         return await super().on_disconnect(websocket, close_code)
 
     def do_init(self, **kwargs):
-        if self.game is None:
-            return dict()
-
         return board_schema.dump(self.game)
 
     def do_start(self, **kwargs):
