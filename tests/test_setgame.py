@@ -9,24 +9,14 @@ CardSchema = marshmallow_dataclass.class_schema(Card)()
 @pytest.fixture
 def cap_set_of_twelve_or_fewer_cards(shuffled_deck):
     game = Game(shuffler=lambda x: x)
-    game.cards = shuffled_deck
+    game.cards = shuffled_deck[:]
     return game
 
 @pytest.fixture
-def cap_set_of_sixteen_cards():
+def cap_set_of_sixteen_cards(needs_extra_cards):
     game = Game(shuffler=lambda x: x)
-
-    numbers = [Number.ONE, Number.TWO]
-    colors = [Color.RED, Color.BLUE]
-    shadings = [Shading.EMPTY, Shading.SOLID]
-    shapes = [Shape.DIAMOND, Shape.OVAL]
-
-    initial_cards = [Card(*attrs) for attrs in product(numbers, colors, shadings, shapes)]
-    for i in initial_cards:
-        game.cards.remove(i)
-    game.cards = initial_cards + game.cards
+    game.cards = needs_extra_cards[:]
     return game
-
 
 class TestGame:
     def test_start_with_at_least_one_set_in_first_twelve_cards(self, cap_set_of_twelve_or_fewer_cards):
