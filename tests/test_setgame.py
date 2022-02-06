@@ -30,3 +30,57 @@ class TestGame:
 
         assert len(cap_set_of_sixteen_cards.board) == 18
         assert len(cap_set_of_sixteen_cards.board) + len(cap_set_of_sixteen_cards.cards) == 81
+
+    def test_accept_set_with_valid_set(self, cap_set_of_twelve_or_fewer_cards):
+        game = cap_set_of_twelve_or_fewer_cards
+        game.start()
+
+        the_set = { 
+            Card(Number.THREE, Color.GREEN, Shading.SOLID, Shape.OVAL),
+            Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.SQUIGGLE),
+            Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.DIAMOND)
+        }
+        result = game.accept_set(the_set)
+
+        assert result
+        for card in the_set:
+            assert card not in game.board
+        assert len(game.board) == 12
+        assert len(game.board) + len(game.cards) == 78
+
+    def test_accept_set_with_invalid_set(self, cap_set_of_twelve_or_fewer_cards):
+        game = cap_set_of_twelve_or_fewer_cards
+        game.start()
+
+        board_copy = game.board[:]
+        cards_copy = game.cards.copy()
+
+        the_set = {
+            Card(Number.THREE, Color.GREEN, Shading.SOLID, Shape.OVAL),
+            Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.SQUIGGLE),
+            Card(Number.THREE, Color.RED, Shading.EMPTY, Shape.OVAL)
+        }
+        result = game.accept_set(the_set)
+
+        assert not result
+        assert game.board == board_copy
+        assert game.cards == cards_copy
+
+    def test_accept_set_with_invalid_cards(self, cap_set_of_twelve_or_fewer_cards):
+        game = cap_set_of_twelve_or_fewer_cards
+        game.start()
+
+        board_copy = game.board[:]
+        cards_copy = game.cards.copy()
+
+        the_set = {
+            Card(Number.ONE, Color.GREEN, Shading.EMPTY, Shape.SQUIGGLE),
+            Card(Number.TWO, Color.GREEN, Shading.EMPTY, Shape.OVAL),
+            # this card is not on the board
+            Card(Number.THREE, Color.GREEN, Shading.EMPTY, Shape.DIAMOND)
+        }
+        result = game.accept_set(the_set)
+
+        assert not result
+        assert game.board == board_copy
+        assert game.cards == cards_copy

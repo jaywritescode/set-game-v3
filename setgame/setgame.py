@@ -26,6 +26,15 @@ class Card:
         return '-'.join(e.name for e in [self.number, self.color, self.shading, self.shape]).lower()
 
 
+def is_set(cards):
+    if len(cards) != 3:
+        return False
+
+    for field in fields(Card):
+        if not sum(getattr(card, field.name).value for card in cards) % 3 == 0:
+            return False
+    return True
+
 def complete_set(c, d):
     number = Number(-(c.number.value + d.number.value) % 3)
     color = Color(-(c.color.value + d.color.value) % 3)
@@ -65,18 +74,29 @@ class Game:
         self.shuffler(self.cards)
         self.cards = deque(self.cards)
         
-        for _ in range(12):
-            self.board.append(self.cards.popleft())
-        while not self.has_set():
-            self.deal_more()
+        self.deal()
 
-    def deal_more(self):
-        while not self.has_set():
+    def deal(self):
+        while len(self.board) < 12 or not self.has_set():
             if not self.cards:
+                # no more cards, game over
                 return True
 
             for _ in range(3):
                 self.board.append(self.cards.popleft())
+
+    def accept_set(self, cards):
+        if not all(card in self.board for card in cards):
+            return None
+
+        if not is_set(cards):
+            return None
+
+        for card in cards:
+            self.board.remove(card)
+        
+        self.deal()
+        return self.board
 
     def has_set(self):
         return contains_set(self.board)
