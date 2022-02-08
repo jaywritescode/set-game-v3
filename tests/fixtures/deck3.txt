@@ -1,0 +1,488 @@
+[
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "THREE",
+      "shape": "DIAMOND",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "ONE",
+      "shape": "OVAL",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "THREE",
+      "shape": "SQUIGGLE",
+      "color": "RED",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "BLUE",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "TWO",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "STRIPED"
+   },
+   {
+      "number": "TWO",
+      "shape": "SQUIGGLE",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   },
+   {
+      "number": "ONE",
+      "shape": "DIAMOND",
+      "color": "BLUE",
+      "shading": "SOLID"
+   },
+   {
+      "number": "TWO",
+      "shape": "OVAL",
+      "color": "GREEN",
+      "shading": "EMPTY"
+   }
+]

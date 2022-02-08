@@ -110,14 +110,44 @@ if __name__ == '__main__':
     from pprint import pprint
     
     deck = deck()
+
+    capset = [
+        Card(Number.ONE, Color.GREEN, Shading.EMPTY, Shape.DIAMOND),
+        Card(Number.ONE, Color.GREEN, Shading.SOLID, Shape.DIAMOND),
+        Card(Number.ONE, Color.RED, Shading.STRIPED, Shape.DIAMOND),
+        Card(Number.ONE, Color.BLUE, Shading.STRIPED, Shape.SQUIGGLE),
+        Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.SQUIGGLE),
+        Card(Number.ONE, Color.RED, Shading.SOLID, Shape.SQUIGGLE),
+        Card(Number.ONE, Color.GREEN, Shading.EMPTY, Shape.OVAL),
+        Card(Number.ONE, Color.GREEN, Shading.SOLID, Shape.OVAL),
+        Card(Number.ONE, Color.RED, Shading.STRIPED, Shape.OVAL),
+        Card(Number.TWO, Color.GREEN, Shading.STRIPED, Shape.SQUIGGLE),
+        Card(Number.TWO, Color.RED, Shading.STRIPED, Shape.SQUIGGLE),
+        Card(Number.THREE, Color.GREEN, Shading.STRIPED, Shape.DIAMOND),
+        Card(Number.THREE, Color.RED, Shading.EMPTY, Shape.DIAMOND),
+        Card(Number.THREE, Color.RED, Shading.SOLID, Shape.DIAMOND),
+        Card(Number.THREE, Color.GREEN, Shading.EMPTY, Shape.SQUIGGLE),
+        Card(Number.THREE, Color.GREEN, Shading.SOLID, Shape.SQUIGGLE),
+        Card(Number.THREE, Color.BLUE, Shading.STRIPED, Shape.SQUIGGLE),
+        Card(Number.THREE, Color.GREEN, Shading.STRIPED, Shape.OVAL),
+        Card(Number.THREE, Color.RED, Shading.EMPTY, Shape.OVAL),
+        Card(Number.THREE, Color.RED, Shading.SOLID, Shape.OVAL)
+    ]
+    set = [
+        Card(Number.TWO, Color.BLUE, Shading.SOLID, Shape.OVAL),
+        Card(Number.TWO, Color.BLUE, Shading.EMPTY, Shape.OVAL),
+        Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.OVAL),
+    ]
+
+    for card in capset + set:
+        deck.remove(card)
+        
+
+    shuffle(set)
+    shuffle(capset)
     shuffle(deck)
+
 
     CardSchema = marshmallow_dataclass.class_schema(Card)()
 
-    s = find_set(deck[:12])
-    if s:
-        # pprint(CardSchema.dump(s))
-        # print("=============================================")
-        print(CardSchema.dumps(deck, many=True))
-    else:
-        print("Try again")
+    print(CardSchema.dumps(set + capset + deck, many=True))

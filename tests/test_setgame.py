@@ -18,6 +18,12 @@ def cap_set_of_sixteen_cards(needs_extra_cards):
     game.cards = needs_extra_cards[:]
     return game
 
+@pytest.fixture
+def cap_set_of_twentyone_cards(deals_extra_cards_after_first_set):
+    game = Game(shuffler=lambda x: x)
+    game.cards = deals_extra_cards_after_first_set[:]
+    return game
+
 class TestGame:
     def test_start_with_at_least_one_set_in_first_twelve_cards(self, cap_set_of_twelve_or_fewer_cards):
         cap_set_of_twelve_or_fewer_cards.start()
@@ -46,6 +52,23 @@ class TestGame:
         for card in the_set:
             assert card not in game.board
         assert len(game.board) == 12
+        assert len(game.board) + len(game.cards) == 78
+
+    def test_accept_set_with_valid_set_then_greater_than_twelve_cap_set(self, cap_set_of_twentyone_cards):
+        game = cap_set_of_twentyone_cards
+        game.start()
+
+        the_set = {
+            Card(Number.TWO, Color.BLUE, Shading.SOLID, Shape.OVAL),
+            Card(Number.TWO, Color.BLUE, Shading.EMPTY, Shape.OVAL),
+            Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.OVAL),
+        }
+        result = game.accept_set(the_set)
+
+        assert result
+        for card in the_set:
+            assert card not in game.board
+        assert len(game.board) == 21
         assert len(game.board) + len(game.cards) == 78
 
     def test_accept_set_with_invalid_set(self, cap_set_of_twelve_or_fewer_cards):

@@ -1,5 +1,3 @@
-import itertools
-from marshmallow.exceptions import ValidationError
 import marshmallow_dataclass
 import os
 import pytest
@@ -18,4 +16,9 @@ def shuffled_deck():
 @pytest.fixture
 def needs_extra_cards():
     with open(os.path.join(FIXTURE_DIR, 'deck2.txt')) as file:
+        return CardSchema.loads(file.read(), many=True)
+
+@pytest.fixture
+def deals_extra_cards_after_first_set():
+    with open(os.path.join(FIXTURE_DIR, 'deck3.txt')) as file:
         return CardSchema.loads(file.read(), many=True)
