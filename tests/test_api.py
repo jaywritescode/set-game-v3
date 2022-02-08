@@ -1,11 +1,19 @@
 import json
+import pytest
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
 from starlette.routing import WebSocketRoute
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket
 
+from setgame.setgame import Game
 from web.api import app
+
+@pytest.fixture
+def sample_game(shuffled_deck):
+    game = Game(shuffler=lambda x: x)
+    game.cards = shuffled_deck[:]
+    return game
 
 
 def test_init_no_game():

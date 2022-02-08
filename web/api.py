@@ -18,12 +18,11 @@ async def index(request):
         'request': request 
     })
 
-class Api(WebSocketEndpoint):
+class App(WebSocketEndpoint):
     encoding = "text"
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
-        self.game = Game()
 
     async def on_connect(self, websocket):
         await websocket.accept()
@@ -46,7 +45,9 @@ class Api(WebSocketEndpoint):
             # error handling
             pass
 
-        response = actions[action_type](**args)
+        state = websocket.app.state
+
+        response = actions[action_type](state, **args)
         response.update({ 'type': action_type })
 
         await websocket.send_json(response)
@@ -54,14 +55,16 @@ class Api(WebSocketEndpoint):
     async def on_disconnect(self, websocket, close_code):
         return await super().on_disconnect(websocket, close_code)
 
-    def do_init(self, **kwargs):
-        return board_schema.dump(self.game)
+    def do_init(self, state, **kwargs):
+        if not getattr(state, 'game', None):
+            state.game = Game()
 
-    def do_start(self, **kwargs):
-        if not self.game.is_started():
-            self.game.start()
-        
-        return board_schema.dump(self.game)
+        return board_schema.dump(state.game)
+
+    def do_start(self, state, **kwargs):
+        if not state.game.is_started():
+            state.game.start()    
+            return board_schema.dump(state.game)
 
     def do_submit(self, **kwargs):
         cards = kwargs['cards']
@@ -69,6 +72,6 @@ class Api(WebSocketEndpoint):
 
 app = Starlette(debug=True, routes=[
     Route('/', index), 
-    WebSocketRoute('/', Api),
+    WebSocketRoute('/', App),
     Mount('/build', StaticFiles(directory='build'), name="static")
 ])
