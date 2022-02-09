@@ -22,10 +22,6 @@ class Card:
     def index(self):
         return sum(getattr(self, field.name).value * (3 ** i) for (i, field) in enumerate(fields(Card)))
 
-    def __str__(self):
-        return '-'.join(e.name for e in [self.number, self.color, self.shading, self.shape]).lower()
-
-
 def is_set(cards):
     if len(cards) != 3:
         return False

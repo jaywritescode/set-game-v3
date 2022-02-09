@@ -1,7 +1,7 @@
 import pytest
 
 from setgame.setgame import Card, Game, Color, Number, Shading, Shape
-from web.serialize import BoardSchema
+from web.serialize import GameSchema, CardSchema
 
 @pytest.fixture
 def sample_game(shuffled_deck):
@@ -10,33 +10,42 @@ def sample_game(shuffled_deck):
     return game
 
 def test_serialize_card():
-    game = Game(shuffler=lambda x: x)
-    game.start()
+    card = Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.DIAMOND)
+    assert CardSchema.dump(card) == {
+        'number': 'ONE',
+        'color': 'RED',
+        'shading': 'EMPTY',
+        'shape': 'DIAMOND'
+    }
 
-    board_schema = BoardSchema()
-    cards = board_schema.dump(game)['board']
-
-    assert cards[0] == 'one-red-empty-diamond'
+def test_deserialize_card():
+    card = CardSchema.load({ 
+        'number': 'ONE',
+        'color': 'RED',
+        'shading': 'EMPTY',
+        'shape': 'DIAMOND'
+    })
+    assert card == Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.DIAMOND)
 
 def test_serialize_game(sample_game):
     sample_game.start()
 
-    board_schema = BoardSchema()
+    board_schema = GameSchema()
     
     assert board_schema.dump(sample_game) == {
         'board': [
-            'three-green-solid-oval',
-            'one-red-empty-squiggle',
-            'three-red-empty-oval',
-            'two-blue-striped-diamond',
-            'two-green-solid-diamond',
-            'two-green-solid-squiggle',
-            'one-red-solid-squiggle',
-            'one-green-empty-squiggle',
-            'two-green-empty-oval',
-            'one-blue-solid-diamond',
-            'three-red-solid-oval',
-            'one-red-solid-diamond',
+            { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
+            { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+            { 'number': 'THREE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'OVAL' },
+            { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' },
+            { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'DIAMOND' },
+            { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
+            { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
+            { 'number': 'ONE', 'color': 'GREEN', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+            { 'number': 'TWO', 'color': 'GREEN', 'shading': 'EMPTY', 'shape': 'OVAL' },
+            { 'number': 'ONE', 'color': 'BLUE', 'shading': 'SOLID', 'shape': 'DIAMOND' },
+            { 'number': 'THREE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'OVAL' },
+            { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'DIAMOND' },
         ]
     }
 
