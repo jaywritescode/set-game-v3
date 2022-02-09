@@ -1,12 +1,35 @@
 import React, { useReducer, useEffect, useState } from "react";
 import classNames from "classnames";
-import { F, isEmpty, partial, splitEvery, toPairs, zipObj } from "ramda";
+import {
+  difference,
+  F,
+  intersection,
+  includes,
+  isEmpty,
+  partial,
+  splitEvery,
+  toLower,
+  toPairs,
+  toUpper,
+  zipObj,
+} from "ramda";
 import Card from "./Card";
 
 import "./App.css";
 import "purecss";
 
 let websocket;
+
+const cardToStr = ({ number, color, shading, shape }) => {
+  return [number, color, shading, shape].map(toLower).join("-");
+};
+
+const strToCard = (string) => {
+  return zipObj(
+    ["number", "color", "shading", "shape"],
+    string.split("-").map(toUpper)
+  );
+};
 
 function App() {
   const [state, dispatch] = useReducer(reducer, { board: Object.create(null) });
@@ -17,7 +40,9 @@ function App() {
     switch (action.type) {
       case "init":
       case "start":
-        return { board: zipObj(action.board, action.board.map(F)) };
+        return {
+          board: zipObj(action.board.map(cardToStr), action.board.map(F)),
+        };
       case "select_card":
         let newVal = !state.board[action.card];
         return {
@@ -26,6 +51,18 @@ function App() {
             [action.card]: newVal,
           },
         };
+      case "submit":
+        console.log(action);
+        let current_board = Object.keys(state.board);
+        let updated_board = action.board.map(cardToStr);
+
+        let r = difference(current_board, updated_board);
+        let n = difference(updated_board, current_board);
+
+        let newboard = current_board.map((k) =>
+          includes(k, r) ? n.shift() : k
+        );
+        return { board: zipObj(newboard, newboard.map(F)) };
     }
   }
 
@@ -73,7 +110,7 @@ function App() {
       websocket.send(
         JSON.stringify({
           type: "submit",
-          cards: selected,
+          cards: selected.map(strToCard),
         })
       );
     }
