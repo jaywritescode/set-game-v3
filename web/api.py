@@ -6,11 +6,12 @@ from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
 from setgame.setgame import Game, deck
-from web.serialize import BoardSchema
+from web.serialize import CardSchema, GameSchema
 
 templates = Jinja2Templates(directory='templates', extensions=['jinja2.ext.debug'])
 
-board_schema = BoardSchema()
+game_schema = GameSchema()
+
 
 async def index(request):
     return templates.TemplateResponse('index.html.jinja', {
@@ -48,7 +49,7 @@ class App(WebSocketEndpoint):
         state = websocket.app.state
 
         response = actions[action_type](state, **args)
-        response.update({ 'type': action_type })
+        response.update(args)
 
         await websocket.send_json(response)
           
@@ -59,15 +60,27 @@ class App(WebSocketEndpoint):
         if not getattr(state, 'game', None):
             state.game = Game()
 
-        return board_schema.dump(state.game)
+        return game_schema.dump(state.game)
 
     def do_start(self, state, **kwargs):
+        # TODO: getattr(state, 'game') should not throw here
         if not state.game.is_started():
             state.game.start()    
-            return board_schema.dump(state.game)
+            return game_schema.dump(state.game)
 
-    def do_submit(self, **kwargs):
-        cards = kwargs['cards']
+    def do_submit(self, state, **kwargs):
+        if not state.game.is_started():
+            # TODO: handle error
+            return dict()
+        
+        cards = CardSchema.load(kwargs['cards'], many=True)
+        result = state.game.accept_set(cards)
+
+        if result is None:
+            # another error
+            return dict()
+
+        return game_schema.dump(state.game)
 
 
 app = Starlette(debug=True, routes=[

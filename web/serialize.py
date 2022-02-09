@@ -6,5 +6,5 @@ from setgame.setgame import Card
 
 CardSchema = marshmallow_dataclass.class_schema(Card)()
 
-class BoardSchema(Schema):
-    board = fields.List(fields.Str())
+class GameSchema(Schema):
+    board = fields.List(fields.Nested(CardSchema))
