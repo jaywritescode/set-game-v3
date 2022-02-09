@@ -7,11 +7,13 @@ function Card(props) {
   const { card, isSelected, onClick } = props;
 
   return (
-    <div
-      className={classNames("card", "column", { isSelected })}
-      style={{ backgroundImage: `url(cards/${card}.png)` }}
-      onClick={onClick}
-    />
+    <div className="card-container pure-u-1-3">
+      <div 
+        className={classNames("card", { isSelected })}
+        style={{ backgroundImage: `url(cards/${card}.png)` }}
+        onClick={onClick}
+      />
+    </div>
   );
 }
 

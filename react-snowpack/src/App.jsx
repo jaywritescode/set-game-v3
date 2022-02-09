@@ -4,7 +4,7 @@ import { F, isEmpty, partial, splitEvery, toPairs, zipObj } from "ramda";
 import Card from "./Card";
 
 import "./App.css";
-import "milligram";
+import "purecss";
 
 let websocket;
 
@@ -107,7 +107,7 @@ function App() {
           <button onClick={onStartClicked}>start game</button>
         ) : (
           splitEvery(3, toPairs(state.board)).map((triple) => (
-            <div className="row card-row">
+            <div className="pure-g card-row">
               {triple.map(([card, isSelected]) => (
                 <Card
                   card={card}
