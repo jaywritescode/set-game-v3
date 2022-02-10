@@ -19,14 +19,38 @@ async def index(request):
         'request': request 
     })
 
-class App(WebSocketEndpoint):
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections = []
+
+    async def accept(self, websocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+
+class SetGameApi(WebSocketEndpoint):
     encoding = "text"
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
+        self.state().connections = ConnectionManager()
+
+    # fix the getter so that self.state points to self.app.state
+    def state(self):
+        return self.scope['app'].state
+
+    def connections(self):
+        return self.state().connections
 
     async def on_connect(self, websocket):
-        await websocket.accept()
+        await self.connections().accept(websocket)
     
     async def on_receive(self, websocket, data):
         actions = {
@@ -46,21 +70,20 @@ class App(WebSocketEndpoint):
             # error handling
             pass
 
-        state = websocket.app.state
-
-        response = actions[action_type](state, **args)
+        response = actions[action_type](**args)
         response.update(args)
 
         await websocket.send_json(response)
           
     async def on_disconnect(self, websocket, close_code):
-        return await super().on_disconnect(websocket, close_code)
+        await super().on_disconnect(websocket, close_code)
+        self.connections().disconnect(websocket)
 
-    def do_init(self, state, **kwargs):
-        if not getattr(state, 'game', None):
-            state.game = Game()
+    def do_init(self, **kwargs):
+        if not getattr(self.state(), 'game', None):
+            self.state().game = Game()
 
-        return game_schema.dump(state.game)
+        return game_schema.dump(self.state().game)
 
     def do_start(self, state, **kwargs):
         # TODO: getattr(state, 'game') should not throw here
@@ -85,6 +108,6 @@ class App(WebSocketEndpoint):
 
 app = Starlette(debug=True, routes=[
     Route('/', index), 
-    WebSocketRoute('/', App),
+    WebSocketRoute('/', SetGameApi),
     Mount('/build', StaticFiles(directory='build'), name="static")
 ])
