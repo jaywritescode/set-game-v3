@@ -62,6 +62,7 @@ class Game:
     def reset(self):
         self.cards = deck()
         self.board = []
+        self.players = dict()
 
     def start(self):
         if self.is_started():
@@ -81,7 +82,13 @@ class Game:
             for _ in range(3):
                 self.board.append(self.cards.popleft())
 
-    def accept_set(self, cards):
+    def add_player(self, name):
+        if name in self.players:
+            raise ValueError(f"{name} is already playing.")
+
+        self.players[name] = list()
+
+    def accept_set(self, cards, *, player):
         if not all(card in self.board for card in cards):
             return None
 
@@ -90,6 +97,8 @@ class Game:
 
         for card in cards:
             self.board.remove(card)
+
+        self.players[player].append(frozenset(cards))
         
         self.deal()
         return self.board
