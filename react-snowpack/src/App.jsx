@@ -1,12 +1,11 @@
 import React, { useReducer, useEffect, useState } from "react";
 import classNames from "classnames";
+import generate from "project-name-generator";
 import {
   difference,
   F,
-  intersection,
   includes,
   isEmpty,
-  partial,
   splitEvery,
   toLower,
   toPairs,
@@ -32,7 +31,10 @@ const strToCard = (string) => {
 };
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, { board: Object.create(null) });
+  const [state, dispatch] = useReducer(reducer, { 
+    board: Object.create(null),
+    playerName: generate().dashed,
+  });
 
   const [highContrastMode, setHighContrastMode] = useState(false);
 
@@ -41,11 +43,13 @@ function App() {
       case "init":
       case "start":
         return {
+          ...state,
           board: zipObj(action.board.map(cardToStr), action.board.map(F)),
         };
       case "select_card":
         let newVal = !state.board[action.card];
         return {
+          ...state,
           board: {
             ...state.board,
             [action.card]: newVal,
@@ -62,7 +66,10 @@ function App() {
         let newboard = current_board.map((k) =>
           includes(k, r) ? n.shift() : k
         );
-        return { board: zipObj(newboard, newboard.map(F)) };
+        return { 
+          ...state, 
+          board: zipObj(newboard, newboard.map(F)) 
+        };
     }
   }
 
@@ -139,6 +146,9 @@ function App() {
         onClick={() => setHighContrastMode(!highContrastMode)}
       />
       <label htmlFor="high-contrast-mode">I'm colorblind!</label>
+      <p>
+        Your id: {state.playerName}
+      </p>
       <div className="board container">
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
