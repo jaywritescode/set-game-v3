@@ -71,9 +71,11 @@ class SetGameApi(WebSocketEndpoint):
             # error handling
             pass
 
-        response = actions[action_type](**args)
-        response.update(args)
-
+        result = actions[action_type](**args['payload'])
+        response = {
+            'type': action_type,
+            'payload': result
+        }
         await websocket.send_json(response)
           
     async def on_disconnect(self, websocket, close_code):
@@ -84,6 +86,7 @@ class SetGameApi(WebSocketEndpoint):
         if not getattr(self.state, 'game', None):
             self.state.game = Game()
 
+        self.state.game.add_player(kwargs['playerName'])
         return game_schema.dump(self.state.game)
 
     def do_start(self, **kwargs):

@@ -28,16 +28,22 @@ def test_deserialize_card():
     assert card == Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.DIAMOND)
 
 def test_serialize_game(sample_game):
+    sample_game.add_player('ron')
+    sample_game.add_player('jeff')
+
     sample_game.start()
 
-    board_schema = GameSchema()
-    
-    assert board_schema.dump(sample_game) == {
+    the_set = { 
+            Card(Number.THREE, Color.GREEN, Shading.SOLID, Shape.OVAL),
+            Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.SQUIGGLE),
+            Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.DIAMOND)
+        }
+    sample_game.accept_set(the_set, player='ron')
+
+    game_schema = GameSchema()
+    assert game_schema.dump(sample_game) == {
         'board': [
-            { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
-            { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
             { 'number': 'THREE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'OVAL' },
-            { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' },
             { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'DIAMOND' },
             { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
             { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
@@ -46,7 +52,20 @@ def test_serialize_game(sample_game):
             { 'number': 'ONE', 'color': 'BLUE', 'shading': 'SOLID', 'shape': 'DIAMOND' },
             { 'number': 'THREE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'OVAL' },
             { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'DIAMOND' },
-        ]
+            { "shape": "SQUIGGLE", "shading": "EMPTY", "number": "ONE", "color": "BLUE" },
+            { "shape": "SQUIGGLE", "shading": "STRIPED", "number": "TWO", "color": "GREEN" },
+            { "shape": "DIAMOND", "shading": "STRIPED", "number": "TWO", "color": "GREEN" },
+        ],
+        'players': {
+            'jeff': [],
+            'ron': [
+                [
+                    { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
+                    { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+                    { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' }
+                ]
+            ]
+        }
     }
 
 

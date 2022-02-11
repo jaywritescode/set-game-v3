@@ -34,13 +34,19 @@ function App() {
   const [state, dispatch] = useReducer(reducer, { 
     board: Object.create(null),
     playerName: generate().dashed,
+    players: [],
   });
 
   const [highContrastMode, setHighContrastMode] = useState(false);
 
   function reducer(state, action) {
     switch (action.type) {
-      case "init":
+      case "joinRoom": {
+        return {
+          ...state,
+          ...action.payload
+        };
+      }
       case "start":
         return {
           ...state,
@@ -73,14 +79,19 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    console.log("useEffect: page inited");
+  useEffect(function onJoinRoom () {
+    console.debug("useEffect: page inited");
 
     websocket = new WebSocket("ws://localhost:3001");
 
     websocket.onopen = (e) => {
       console.log("[open] connection established");
-      websocket.send(JSON.stringify({ type: "init" }));
+      websocket.send(JSON.stringify({ 
+        type: "joinRoom",
+        payload: {
+          playerName: state.playerName,
+        }
+      }));
     };
 
     websocket.onmessage = (e) => {
@@ -146,6 +157,15 @@ function App() {
         onClick={() => setHighContrastMode(!highContrastMode)}
       />
       <label htmlFor="high-contrast-mode">I'm colorblind!</label>
+      <div>
+        <h4>Players</h4>
+        <ul>
+          {Object.keys(state.players).map(playerName => (
+            <li className={classNames('player', { myself: playerName == state.playerName })} key={playerName}>{playerName}</li>
+          ))}
+        </ul>
+      </div>
+      
       <p>
         Your id: {state.playerName}
       </p>

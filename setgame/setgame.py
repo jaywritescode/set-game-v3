@@ -98,7 +98,7 @@ class Game:
         for card in cards:
             self.board.remove(card)
 
-        self.players[player].append(frozenset(cards))
+        self.players[player].append(dict.fromkeys(cards))
         
         self.deal()
         return self.board

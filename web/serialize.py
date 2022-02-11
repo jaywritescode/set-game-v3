@@ -8,3 +8,5 @@ CardSchema = marshmallow_dataclass.class_schema(Card)()
 
 class GameSchema(Schema):
     board = fields.List(fields.Nested(CardSchema))
+    players = fields.Dict(
+        keys=fields.Str(), values=fields.List(fields.List(fields.Nested(CardSchema))))
