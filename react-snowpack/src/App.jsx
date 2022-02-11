@@ -31,7 +31,7 @@ const strToCard = (string) => {
 };
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, { 
+  const [state, dispatch] = useReducer(reducer, {
     board: Object.create(null),
     playerName: generate().dashed,
     players: [],
@@ -44,7 +44,7 @@ function App() {
       case "joinRoom": {
         return {
           ...state,
-          ...action.payload
+          ...action.payload,
         };
       }
       case "start":
@@ -72,26 +72,28 @@ function App() {
         let newboard = current_board.map((k) =>
           includes(k, r) ? n.shift() : k
         );
-        return { 
-          ...state, 
-          board: zipObj(newboard, newboard.map(F)) 
+        return {
+          ...state,
+          board: zipObj(newboard, newboard.map(F)),
         };
     }
   }
 
-  useEffect(function onJoinRoom () {
+  useEffect(function onJoinRoom() {
     console.debug("useEffect: page inited");
 
     websocket = new WebSocket("ws://localhost:3001");
 
     websocket.onopen = (e) => {
       console.log("[open] connection established");
-      websocket.send(JSON.stringify({ 
-        type: "joinRoom",
-        payload: {
-          playerName: state.playerName,
-        }
-      }));
+      websocket.send(
+        JSON.stringify({
+          type: "joinRoom",
+          payload: {
+            playerName: state.playerName,
+          },
+        })
+      );
     };
 
     websocket.onmessage = (e) => {
@@ -160,15 +162,20 @@ function App() {
       <div>
         <h4>Players</h4>
         <ul>
-          {Object.keys(state.players).map(playerName => (
-            <li className={classNames('player', { myself: playerName == state.playerName })} key={playerName}>{playerName}</li>
+          {Object.keys(state.players).map((playerName) => (
+            <li
+              className={classNames("player", {
+                myself: playerName == state.playerName,
+              })}
+              key={playerName}
+            >
+              {playerName}
+            </li>
           ))}
         </ul>
       </div>
-      
-      <p>
-        Your id: {state.playerName}
-      </p>
+
+      <p>Your id: {state.playerName}</p>
       <div className="board container">
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
