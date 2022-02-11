@@ -40,21 +40,22 @@ class SetGameApi(WebSocketEndpoint):
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
-        self.state().connections = ConnectionManager()
+        self.state.connections = ConnectionManager()
 
-    # fix the getter so that self.state points to self.app.state
+    @property
     def state(self):
         return self.scope['app'].state
 
+    @property
     def connections(self):
-        return self.state().connections
+        return self.state.connections
 
     async def on_connect(self, websocket):
-        await self.connections().accept(websocket)
+        await self.connections.accept(websocket)
     
     async def on_receive(self, websocket, data):
         actions = {
-            'init': self.do_init,
+            'joinRoom': self.handle_join_room,
             'start': self.do_start,
             'submit': self.do_submit,
         }
@@ -77,21 +78,23 @@ class SetGameApi(WebSocketEndpoint):
           
     async def on_disconnect(self, websocket, close_code):
         await super().on_disconnect(websocket, close_code)
-        self.connections().disconnect(websocket)
+        self.connections.disconnect(websocket)
 
-    def do_init(self, **kwargs):
-        if not getattr(self.state(), 'game', None):
-            self.state().game = Game()
+    def handle_join_room(self, **kwargs):
+        if not getattr(self.state, 'game', None):
+            self.state.game = Game()
 
-        return game_schema.dump(self.state().game)
+        return game_schema.dump(self.state.game)
 
-    def do_start(self, state, **kwargs):
+    def do_start(self, **kwargs):
         # TODO: getattr(state, 'game') should not throw here
-        if not state.game.is_started():
-            state.game.start()    
-            return game_schema.dump(state.game)
+        if not self.state().game.is_started():
+            self.state().game.start()    
+            return game_schema.dump(self.state().game)
 
     def do_submit(self, state, **kwargs):
+        raise
+
         if not state.game.is_started():
             # TODO: handle error
             return dict()

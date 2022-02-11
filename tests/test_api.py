@@ -16,22 +16,29 @@ def sample_game(shuffled_deck):
     return game
 
 
-def test_init_no_game():
+def test_join_room_no_game():
     client = TestClient(app)
     with client.websocket_connect('/') as websocket:
         websocket.send_json({ 
-            'type': 'init',
-            'playerName': 'cute-porpoise-9887'
+            'type': 'joinRoom',
+            'payload': {
+                'newPlayer': 'cute-porpoise-9887'
+            }
         })
-        
-        data = websocket.receive_json()
-
         assert len(app.state.connections.active_connections) == 1
+
+        data = websocket.receive_json()
         assert data == { 
-            'type': 'init',
-            'playerName': 'cute-porpoise-9887', 
-            'board': [] 
+            'type': 'joinRoom',
+            'payload': {
+                'players': [{
+                    'cute-porpoise-9887': 0,
+                }],
+                'board': []
+            }
         }
+
+
 
 def test_start_game_not_started(sample_game):
     client = TestClient(app)
