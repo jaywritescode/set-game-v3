@@ -1,3 +1,4 @@
+from collections import namedtuple
 import json
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
@@ -35,12 +36,14 @@ class ConnectionManager:
             await connection.send_json(message)
 
 
+Message = namedtuple('Message', ['data', 'broadcast'], defaults=[False])
+
+
 class SetGameApi(WebSocketEndpoint):
     encoding = "text"
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
-        self.state.connections = ConnectionManager()
 
     @property
     def state(self):
@@ -49,6 +52,10 @@ class SetGameApi(WebSocketEndpoint):
     @property
     def connections(self):
         return self.state.connections
+
+    @property
+    def game(self):
+        return getattr(self.state, 'game', None)
 
     async def on_connect(self, websocket):
         await self.connections.accept(websocket)
@@ -60,34 +67,36 @@ class SetGameApi(WebSocketEndpoint):
             'submit': self.do_submit,
         }
 
-        try:
-            args = json.loads(data)
-        except:
-            await websocket.send_text('not json')
-            return
-
+        args = json.loads(data)
         action_type = args['type']
         if action_type not in actions.keys():
             # error handling
             pass
 
-        result = actions[action_type](**args['payload'])
+        message = actions[action_type](**args['payload'])
         response = {
             'type': action_type,
-            'payload': result
+            'payload': message.data
         }
-        await websocket.send_json(response)
+
+        if message.broadcast:
+            await self.connections.broadcast(response)
+        else:
+            await websocket.send_json(response)
           
     async def on_disconnect(self, websocket, close_code):
         await super().on_disconnect(websocket, close_code)
         self.connections.disconnect(websocket)
 
     def handle_join_room(self, **kwargs):
-        if not getattr(self.state, 'game', None):
+        if not self.game:
             self.state.game = Game()
 
-        self.state.game.add_player(kwargs['playerName'])
-        return game_schema.dump(self.state.game)
+        try:
+            self.game.add_player(kwargs['playerName'])
+            return Message(game_schema.dump(self.game), broadcast=True)
+        except ValueError as e:
+            return Message({ 'error': e.message })
 
     def do_start(self, **kwargs):
         # TODO: getattr(state, 'game') should not throw here
@@ -117,3 +126,4 @@ app = Starlette(debug=True, routes=[
     WebSocketRoute('/', SetGameApi),
     Mount('/build', StaticFiles(directory='build'), name="static")
 ])
+app.state.connections = ConnectionManager()

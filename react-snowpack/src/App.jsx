@@ -175,7 +175,6 @@ function App() {
         </ul>
       </div>
 
-      <p>Your id: {state.playerName}</p>
       <div className="board container">
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
