@@ -187,6 +187,7 @@ function App() {
               {triple.map(([card, isSelected]) => (
                 <Card
                   card={card}
+                  key={card}
                   isSelected={isSelected}
                   onClick={() => onCardClicked(card)}
                 />
