@@ -48,9 +48,10 @@ function App() {
         };
       }
       case "start":
+        const { board } = action.payload;
         return {
           ...state,
-          board: zipObj(action.board.map(cardToStr), action.board.map(F)),
+          board: zipObj(board.map(cardToStr), board.map(F)),
         };
       case "select_card":
         let newVal = !state.board[action.card];
@@ -137,8 +138,10 @@ function App() {
   }, [state.board]);
 
   const onStartClicked = () => {
-    console.log("onStartClicked");
-    websocket.send(JSON.stringify({ type: "start" }));
+    websocket.send(JSON.stringify({ 
+      type: "start",
+      payload: {}
+    }));
   };
 
   const onCardClicked = (card) => {

@@ -63,7 +63,7 @@ class SetGameApi(WebSocketEndpoint):
     async def on_receive(self, websocket, data):
         actions = {
             'joinRoom': self.handle_join_room,
-            'start': self.do_start,
+            'start': self.handle_start,
             'submit': self.do_submit,
         }
 
@@ -96,13 +96,15 @@ class SetGameApi(WebSocketEndpoint):
             self.game.add_player(kwargs['playerName'])
             return Message(game_schema.dump(self.game), broadcast=True)
         except ValueError as e:
-            return Message({ 'error': e.message })
+            return Message({ 'error': e.args })
 
-    def do_start(self, **kwargs):
-        # TODO: getattr(state, 'game') should not throw here
-        if not self.state().game.is_started():
-            self.state().game.start()    
-            return game_schema.dump(self.state().game)
+    def handle_start(self, **kwargs):
+        if self.game.is_started():
+            return Message({ 'error': 'game is already started '})
+
+        self.game.start()
+        return Message(game_schema.dump(self.game), broadcast=True)        
+        
 
     def do_submit(self, state, **kwargs):
         raise
