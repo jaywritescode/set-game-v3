@@ -48,24 +48,23 @@ function App() {
         };
       }
       case "start":
-        const { board } = action.payload;
+        let { board } = action.payload;
         return {
           ...state,
           board: zipObj(board.map(cardToStr), board.map(F)),
         };
       case "select_card":
-        let newVal = !state.board[action.card];
+        let card = action.payload.card;
         return {
           ...state,
           board: {
             ...state.board,
-            [action.card]: newVal,
+            [card]: !state.board[card],
           },
         };
       case "submit":
-        console.log(action);
         let current_board = Object.keys(state.board);
-        let updated_board = action.board.map(cardToStr);
+        let updated_board = action.payload.board.map(cardToStr);
 
         let r = difference(current_board, updated_board);
         let n = difference(updated_board, current_board);
@@ -76,6 +75,7 @@ function App() {
         return {
           ...state,
           board: zipObj(newboard, newboard.map(F)),
+          players
         };
     }
   }
@@ -121,7 +121,7 @@ function App() {
     return () => websocket.close(1000, "Done");
   }, []);
 
-  useEffect(() => {
+  useEffect(function onCardSelected() {
     console.log("useEffect: card selected");
 
     const selected = toPairs(state.board)
@@ -131,7 +131,10 @@ function App() {
       websocket.send(
         JSON.stringify({
           type: "submit",
-          cards: selected.map(strToCard),
+          payload: {
+            cards: selected.map(strToCard),
+            player: state.playerName,
+          }
         })
       );
     }
@@ -148,7 +151,7 @@ function App() {
     console.log("onCardClicked: ", card);
     dispatch({
       type: "select_card",
-      card,
+      payload: { card },
     });
   };
 
@@ -199,5 +202,39 @@ function App() {
     </div>
   );
 }
+
+/*
+function Board() {
+  const [state, setState] = useState(Object.create(null));
+
+  const onCardClicked = (card) => {
+    setState({
+      ...state,
+      card: !state.card
+    });
+  }
+
+  return (
+    <div className="board container">
+        {isEmpty(state) ? (
+          <button onClick={onStartClicked}>start game</button>
+        ) : (
+          splitEvery(3, toPairs(state)).map((triple) => (
+            <div className="pure-g card-row">
+              {triple.map(([card, isSelected]) => (
+                <Card
+                  card={card}
+                  key={card}
+                  isSelected={isSelected}
+                  onClick={() => onCardClicked(card)}
+                />
+              ))}
+            </div>
+          ))
+        )}
+    </div>
+  );
+}
+*/
 
 export default App;

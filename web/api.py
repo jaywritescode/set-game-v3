@@ -64,7 +64,7 @@ class SetGameApi(WebSocketEndpoint):
         actions = {
             'joinRoom': self.handle_join_room,
             'start': self.handle_start,
-            'submit': self.do_submit,
+            'submit': self.handle_submit,
         }
 
         args = json.loads(data)
@@ -106,21 +106,17 @@ class SetGameApi(WebSocketEndpoint):
         return Message(game_schema.dump(self.game), broadcast=True)        
         
 
-    def do_submit(self, state, **kwargs):
-        raise
-
-        if not state.game.is_started():
-            # TODO: handle error
-            return dict()
+    def handle_submit(self, **kwargs):
+        if not self.game.is_started():
+            raise
         
         cards = CardSchema.load(kwargs['cards'], many=True)
-        result = state.game.accept_set(cards)
+        result = self.game.accept_set(cards, player=kwargs['player'])
 
-        if result is None:
-            # another error
-            return dict()
+        if not result:
+            return Message({ 'error': 'invalid' })
 
-        return game_schema.dump(state.game)
+        return Message(game_schema.dump(self.game), broadcast=True)
 
 
 app = Starlette(debug=True, routes=[
