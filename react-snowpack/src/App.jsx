@@ -6,6 +6,7 @@ import {
   F,
   includes,
   isEmpty,
+  sortBy,
   splitEvery,
   toLower,
   toPairs,
@@ -75,7 +76,7 @@ function App() {
         return {
           ...state,
           board: zipObj(newboard, newboard.map(F)),
-          players
+          players: action.payload.players,
         };
     }
   }
@@ -121,30 +122,35 @@ function App() {
     return () => websocket.close(1000, "Done");
   }, []);
 
-  useEffect(function onCardSelected() {
-    console.log("useEffect: card selected");
+  useEffect(
+    function onCardSelected() {
+      console.log("useEffect: card selected");
 
-    const selected = toPairs(state.board)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([card, _]) => card);
-    if (selected.length == 3) {
-      websocket.send(
-        JSON.stringify({
-          type: "submit",
-          payload: {
-            cards: selected.map(strToCard),
-            player: state.playerName,
-          }
-        })
-      );
-    }
-  }, [state.board]);
+      const selected = toPairs(state.board)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([card, _]) => card);
+      if (selected.length == 3) {
+        websocket.send(
+          JSON.stringify({
+            type: "submit",
+            payload: {
+              cards: selected.map(strToCard),
+              player: state.playerName,
+            },
+          })
+        );
+      }
+    },
+    [state.board]
+  );
 
   const onStartClicked = () => {
-    websocket.send(JSON.stringify({ 
-      type: "start",
-      payload: {}
-    }));
+    websocket.send(
+      JSON.stringify({
+        type: "start",
+        payload: {},
+      })
+    );
   };
 
   const onCardClicked = (card) => {
@@ -165,20 +171,21 @@ function App() {
         onClick={() => setHighContrastMode(!highContrastMode)}
       />
       <label htmlFor="high-contrast-mode">I'm colorblind!</label>
-      <div>
+      <div className="players">
         <h4>Players</h4>
-        <ul>
-          {Object.keys(state.players).map((playerName) => (
-            <li
-              className={classNames("player", {
-                myself: playerName == state.playerName,
-              })}
-              key={playerName}
-            >
-              {playerName}
-            </li>
-          ))}
-        </ul>
+        {sortBy(([_, setsFound]) => setsFound.length)(
+          toPairs(state.players)
+        ).map(([playerName, setsFound]) => (
+          <li
+            className={classNames("player", {
+              myself: playerName == state.playerName,
+            })}
+            key={playerName}
+          >
+            <div>{playerName}</div>
+            <div>{setsFound.length}</div>
+          </li>
+        ))}
       </div>
 
       <div className="board container">
