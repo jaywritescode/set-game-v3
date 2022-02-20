@@ -39,10 +39,9 @@ def test_serialize_game(sample_game):
             Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.DIAMOND)
         }
     sample_game.accept_set(the_set, player='ron')
-
-    game_schema = GameSchema()
-    assert game_schema.dump(sample_game) == {
-        'board': [
+    
+    dump = GameSchema().dump(sample_game)
+    assert dump['board'] == [
             { 'number': 'THREE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'OVAL' },
             { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'DIAMOND' },
             { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
@@ -55,17 +54,20 @@ def test_serialize_game(sample_game):
             { "shape": "SQUIGGLE", "shading": "EMPTY", "number": "ONE", "color": "BLUE" },
             { "shape": "SQUIGGLE", "shading": "STRIPED", "number": "TWO", "color": "GREEN" },
             { "shape": "DIAMOND", "shading": "STRIPED", "number": "TWO", "color": "GREEN" },
-        ],
-        'players': {
-            'jeff': [],
-            'ron': [
-                [
-                    { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
-                    { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
-                    { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' }
-                ]
-            ]
-        }
-    }
+        ]
+    
+    assert dump['players']['jeff'] == []
+    for i, s in enumerate(dump['players']['ron']):
+        assert is_permutation(s, [[
+        { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
+        { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+        { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' }
+    ]][i])
 
 
+def is_permutation(m, n):    
+    for val in m:
+        assert val in n
+    for val in n:
+        assert val in m
+    return True
