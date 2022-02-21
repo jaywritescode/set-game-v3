@@ -31,8 +31,16 @@ def test_multiple_players(server, browser):
     for page in pages:
         page.goto("http://localhost:3001")
 
-    def make_players_locator(page):
-        return page.locator('.players .player')
+    for page in pages:
+        assert page.locator('.players .player').count() == 4
+
+def test_click_start_multiple_players(server, browser):
+    pages = [browser.new_context().new_page() for _ in range(2)]
 
     for page in pages:
-        assert make_players_locator(page).count() == 4
+        page.goto("http://localhost:3001/?seed=42")
+
+    pages[0].locator('.board button').click()
+
+    for page in pages:
+        assert page.locator('.board .card').count() == 12
