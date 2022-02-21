@@ -13,6 +13,9 @@ jinja2 = "*"
 [dev-packages]
 pytest = "*"
 requests = "*"
+playwright = "*"
+pytest-playwright = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.9"

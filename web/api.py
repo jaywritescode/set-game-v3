@@ -125,12 +125,3 @@ app = Starlette(debug=True, routes=[
     Mount('/build', StaticFiles(directory='build'), name="static")
 ])
 app.state.connections = ConnectionManager()
-
-import argparse
-import random
-parser = argparse.ArgumentParser(description="Run the backend")
-parser.add_argument("--seed")
-
-seed = parser.parse_args().seed
-if seed is not None:
-    random.seed(seed)
