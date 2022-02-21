@@ -1,5 +1,6 @@
 from collections import namedtuple
 import json
+import random
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
 from starlette.routing import Mount, Route, WebSocketRoute
@@ -15,6 +16,10 @@ game_schema = GameSchema()
 
 
 async def index(request):
+    random_seed = request.query_params.get('seed')
+    if random_seed is not None:
+        request.app.state.seed = random_seed
+
     return templates.TemplateResponse('index.html.jinja', {
         'deck': deck(),
         'request': request 
@@ -90,7 +95,7 @@ class SetGameApi(WebSocketEndpoint):
 
     def handle_join_room(self, **kwargs):
         if not self.game:
-            self.state.game = Game()
+            self.state.game = Game(seed=getattr(self.state, 'seed'))
 
         try:
             self.game.add_player(kwargs['playerName'])

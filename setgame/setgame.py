@@ -2,7 +2,7 @@ from collections import deque
 from dataclasses import dataclass, fields
 from enum import Enum
 from itertools import combinations, product
-from random import shuffle
+import random
 
 Number = Enum('Number', 'ONE TWO THREE', start=0)
 
@@ -55,9 +55,10 @@ def deck():
 
 
 class Game:
-    def __init__(self, shuffler=shuffle):
+    def __init__(self, shuffler=random.shuffle, seed=None):
         self.reset()
         self.shuffler = shuffler
+        self.seed = seed
 
     def reset(self):
         self.cards = deck()
@@ -67,6 +68,9 @@ class Game:
     def start(self):
         if self.is_started():
             return
+
+        if self.seed is not None:
+            random.seed(self.seed)
 
         self.shuffler(self.cards)
         self.cards = deque(self.cards)
