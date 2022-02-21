@@ -16,6 +16,23 @@ def server():
     yield
     proc.kill()
 
-def test_example_is_working(server, page):
+def test_page_loads(server, page):
     page.goto("http://localhost:3001")
     assert page.title() == "set game"
+
+def test_first_player(server, page):
+    page.goto("http://localhost:3001")
+    players_el = page.locator('.players .player')
+    assert players_el.count() == 1
+
+def test_multiple_players(server, browser):
+    pages = [browser.new_context().new_page() for _ in range(4)]
+    
+    for page in pages:
+        page.goto("http://localhost:3001")
+
+    def make_players_locator(page):
+        return page.locator('.players .player')
+
+    for page in pages:
+        assert make_players_locator(page).count() == 4
