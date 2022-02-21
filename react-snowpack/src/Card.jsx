@@ -10,7 +10,7 @@ function Card(props) {
     <div className="card-container pure-u-1-3">
       <div
         className={classNames("card", { isSelected })}
-        style={{ backgroundImage: `url(cards/${card}.png)` }}
+        style={{ backgroundImage: `url(/assets/cards/${card}.png)` }}
         onClick={onClick}
       />
     </div>
