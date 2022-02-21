@@ -1,24 +1,24 @@
 <!doctype html>
 <html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>set game</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head>
-  <meta charset="utf-8">
-  <title>set game</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% for card in deck %}
+      {% set imagepath = [card.number, card.color, card.shading, card.shape]|join('-', attribute='name')|lower %}
+      <link rel="preload" as="image" href="{{ url_for('static', path='cards/' ~ imagepath ~ '.png') }}">
+    {% endfor %}
 
-  {% for card in deck %}
-    {% set imagepath = [card.number, card.color, card.shading, card.shape]|join('-', attribute='name')|lower %}
-    <link rel="preload" as="image" href="{{ url_for('static', path='cards/' ~ imagepath ~ '.png') }}">
-  {% endfor %}
+    <link rel="stylesheet" href="{{ url_for('static', path='index.css') }}">
+    <meta name="theme-color" content="#fafafa">
+  </head>
 
-  <link rel="stylesheet" href="{{ url_for('static', path='index.css') }}">
-  <meta name="theme-color" content="#fafafa">
-</head>
-
-<body>
-  <main>
-    <div id="root"></div>
-  </main>
-  <script type="module" src="{{ url_for('static', path='dist/index.js') }}"></script>
-</body>
+  <body>
+    <main>
+      <div id="root"></div>
+    </main>
+    <script type="module" src="{{ url_for('static', path='dist/index.js') }}"></script>
+  </body>
+</html>
