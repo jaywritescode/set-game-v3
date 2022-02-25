@@ -17,6 +17,7 @@ import Card from "./Card";
 
 import "./App.css";
 import "purecss";
+import "./toggle.scss"
 
 let websocket;
 
@@ -162,15 +163,18 @@ function App() {
   };
 
   return (
-    <div
-      className={classNames("app", { "high-contrast-mode": highContrastMode })}
-    >
-      <input
-        id="high-contrast-mode"
-        type="checkbox"
-        onClick={() => setHighContrastMode(!highContrastMode)}
-      />
-      <label htmlFor="high-contrast-mode">I'm colorblind!</label>
+    <>
+      <menu>
+        <div>
+          <input
+            id="high-contrast-mode"
+            type="checkbox"
+            className="switch"
+            onClick={() => setHighContrastMode(!highContrastMode)}
+          />
+          <label htmlFor="high-contrast-mode">I'm colorblind!</label>
+        </div>
+      </menu>
       <div className="players">
         <h4>Players</h4>
         {sortBy(([_, setsFound]) => setsFound.length)(
@@ -188,7 +192,11 @@ function App() {
         ))}
       </div>
 
-      <div className="board container">
+      <div
+        className={classNames("board", "container", {
+          "high-contrast-mode": highContrastMode,
+        })}
+      >
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
         ) : (
@@ -206,42 +214,8 @@ function App() {
           ))
         )}
       </div>
-    </div>
+    </>
   );
 }
-
-/*
-function Board() {
-  const [state, setState] = useState(Object.create(null));
-
-  const onCardClicked = (card) => {
-    setState({
-      ...state,
-      card: !state.card
-    });
-  }
-
-  return (
-    <div className="board container">
-        {isEmpty(state) ? (
-          <button onClick={onStartClicked}>start game</button>
-        ) : (
-          splitEvery(3, toPairs(state)).map((triple) => (
-            <div className="pure-g card-row">
-              {triple.map(([card, isSelected]) => (
-                <Card
-                  card={card}
-                  key={card}
-                  isSelected={isSelected}
-                  onClick={() => onCardClicked(card)}
-                />
-              ))}
-            </div>
-          ))
-        )}
-    </div>
-  );
-}
-*/
 
 export default App;
