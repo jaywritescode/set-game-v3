@@ -6,17 +6,26 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {% for card in deck %}
+    {# {% for card in deck %}
       {% set imagepath = [card.number, card.color, card.shading, card.shape]|join('-', attribute='name')|lower %}
       <link rel="preload" as="image" href="{{ url_for('static', path='cards/' ~ imagepath ~ '.png') }}">
-    {% endfor %}
+    {% endfor %} #}
+
+    <link rel="stylesheet" href="{{ url_for('static', path='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='normalize.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', path='index.css') }}">
     <meta name="theme-color" content="#fafafa">
   </head>
 
   <body>
+    <header>
+      set game
+    </header>
     <main id="root"></main>
+    <footer>
+      (mostly) written by github-icon jaywritescode
+    </footer>
     <script type="module" src="{{ url_for('static', path='dist/index.js') }}"></script>
   </body>
 </html>

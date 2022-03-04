@@ -127,6 +127,6 @@ class SetGameApi(WebSocketEndpoint):
 app = Starlette(debug=True, routes=[
     Route('/', index), 
     WebSocketRoute('/', SetGameApi),
-    Mount('/assets', StaticFiles(directory='build'), name="static")
+    Mount('/assets', StaticFiles(directory='assets'), name="static")
 ])
 app.state.connections = ConnectionManager()
