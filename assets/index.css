@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Roboto, sans-serif;
+  padding: 0 1.25rem;
+}
+
+header .title {
+  font-weight: 300;
+}
+
+main {
+  flex-grow: 8;
+}
+
+a {
+  text-decoration: none;
+}

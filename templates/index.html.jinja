@@ -15,16 +15,24 @@
     <link rel="stylesheet" href="{{ url_for('static', path='normalize.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', path='index.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='icomoon.css') }}">
+
     <meta name="theme-color" content="#fafafa">
   </head>
 
   <body>
     <header>
-      set game
+      <h1 class="title">set game</h1>
     </header>
     <main id="root"></main>
     <footer>
-      (mostly) written by github-icon jaywritescode
+      <h6>
+        written by <i class="icon-github"></i> <a href="https://github.com/jaywritescode">jaywritescode</a>
+      </h6>
     </footer>
     <script type="module" src="{{ url_for('static', path='dist/index.js') }}"></script>
   </body>
