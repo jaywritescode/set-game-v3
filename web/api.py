@@ -1,6 +1,5 @@
 from collections import namedtuple
 import json
-import random
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
 from starlette.routing import Mount, Route, WebSocketRoute
