@@ -17,7 +17,6 @@ import Card from "./Card";
 
 import "./App.css";
 import "purecss";
-import "./toggle.scss"
 
 let websocket;
 
