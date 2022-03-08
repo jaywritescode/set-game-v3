@@ -6,7 +6,6 @@ export default {
   },
   plugins: [
     "@snowpack/plugin-react-refresh",
-    "@snowpack/plugin-sass",
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
