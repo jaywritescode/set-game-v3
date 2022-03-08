@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState } from "react";
+import React, { useReducer, useEffect } from "react";
 import classNames from "classnames";
 import generate from "project-name-generator";
 import {
@@ -37,8 +37,6 @@ function App() {
     playerName: generate().dashed,
     players: [],
   });
-
-  const [highContrastMode, setHighContrastMode] = useState(false);
 
   function reducer(state, action) {
     switch (action.type) {
@@ -163,17 +161,6 @@ function App() {
 
   return (
     <>
-      <menu>
-        <div>
-          <input
-            id="high-contrast-mode"
-            type="checkbox"
-            className="switch"
-            onClick={() => setHighContrastMode(!highContrastMode)}
-          />
-          <label htmlFor="high-contrast-mode">I'm colorblind!</label>
-        </div>
-      </menu>
       <div className="players">
         <h4>Players</h4>
         {sortBy(([_, setsFound]) => setsFound.length)(
@@ -192,9 +179,7 @@ function App() {
       </div>
 
       <div
-        className={classNames("board", "container", {
-          "high-contrast-mode": highContrastMode,
-        })}
+        className={classNames("board", "container")}
       >
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
