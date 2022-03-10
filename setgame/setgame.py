@@ -150,12 +150,7 @@ if __name__ == '__main__':
 
     for card in capset + set:
         deck.remove(card)
-        
-
-    shuffle(set)
-    shuffle(capset)
-    shuffle(deck)
-
+    
 
     CardSchema = marshmallow_dataclass.class_schema(Card)()
 

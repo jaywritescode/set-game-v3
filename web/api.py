@@ -94,7 +94,7 @@ class SetGameApi(WebSocketEndpoint):
 
     def handle_join_room(self, **kwargs):
         if not self.game:
-            self.state.game = Game(seed=getattr(self.state, 'seed'))
+            self.state.game = Game(seed=getattr(self.state, 'seed', None))
 
         try:
             self.game.add_player(kwargs['playerName'])
