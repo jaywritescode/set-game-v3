@@ -1,5 +1,4 @@
 .board {
-  height: 80vh;
   overflow: hidden;
   border: 1px solid black;
 }
