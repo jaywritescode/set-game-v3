@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useState, useReducer, useEffect, useCallback } from "react";
 import classNames from "classnames";
 import generate from "project-name-generator";
 import {
@@ -31,12 +31,78 @@ const strToCard = (string) => {
   );
 };
 
+const useWebsocket = (onMessage) => {
+  const [ws, setWebSocket] = useState(null);
+
+  // TODO: Doing this so that we don't try to send messages in the App f.c. when we're not connected.
+  //  but managing connection state this way feels wrong.
+  const [connected, setConnected] = useState(false);
+
+  const connect = useCallback(() => {
+    console.log('useWebsocket: connect');
+    setWebSocket(new WebSocket("ws://localhost:3001"));
+  }, []);
+
+  const sendMessage = useCallback((args) => {
+    console.log('useWebsocket: sendMessage');
+    if (!ws) { return; }
+
+    ws.send(JSON.stringify(args))
+  }, [ws]);
+
+  const onClose = useCallback((e) => {
+    if (e.wasClean) {
+      console.info(
+        `[close] connection closed cleanly, code=${e.code}, reason=${e.reason}`
+      );
+    } else {
+      console.warn("[close] connection died");
+    }
+    setConnected(false);
+  }, []);
+
+  const close = useCallback((code, msg) => {
+    ws.close(code, msg);
+  }, [ws]);
+
+  // useEffect to make sure the websocket exists before you try adding event handlers to it
+  useEffect(function setOpenHandler() {
+    console.log('setOpenHandler');
+    if (!ws) { return; }
+    ws.addEventListener('open', (e) => {
+      console.info('[open] connection established');
+      setConnected(true);
+    });
+    return () => ws.removeEventListener('open');
+  }, [ws]);
+
+  useEffect(function setMessageHandler() {
+    console.log('setMessageHandler');
+    if (!ws) { return; }
+    ws.addEventListener('message', (e) => {
+      console.info(`[message]: ${e.data}`);
+      onMessage(JSON.parse(e.data));
+    });
+    return () => ws.removeEventListener('message');
+  }, [ws]);
+
+  useEffect(function setCloseHandler() {
+    console.log('setCloseHandler');
+    if (!ws) { return; }
+    ws.addEventListener('close', onClose);
+    return () => ws.removeEventListener('close');
+  }, [ws]);
+
+  return [connect, sendMessage, close, connected];
+}
 function App() {
   const [state, dispatch] = useReducer(reducer, {
     board: Object.create(null),
     playerName: generate().dashed,
     players: [],
   });
+
+  const [connect, sendMessage, close, connected] = useWebsocket(dispatch);
 
   function reducer(state, action) {
     switch (action.type) {
@@ -111,14 +177,7 @@ function App() {
       } else {
         console.error("[close] connection died");
       }
-    };
-
-    websocket.onerror = (err) => {
-      console.error("[error]: ", err.message);
-    };
-
-    return () => websocket.close(1000, "Done");
-  }, []);
+  }, [connected, state.players]);
 
   useEffect(
     function onCardSelected() {
