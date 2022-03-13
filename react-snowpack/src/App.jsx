@@ -6,17 +6,20 @@ import {
   F,
   includes,
   isEmpty,
-  sortBy,
   splitEvery,
   toLower,
   toPairs,
   toUpper,
   zipObj,
 } from "ramda";
+
 import Card from "./Card";
+import Players from "./Players";
 
 import "./App.css";
 import "purecss";
+
+const MAX_PLAYERS = 4;
 
 const playerName = generate().dashed;
 
@@ -95,7 +98,9 @@ const useWebsocket = (onMessage) => {
 
   return [connect, sendMessage, close, connected];
 }
+
 function App() {
+  
   const [state, dispatch] = useReducer(reducer, {
     board: Object.create(null),
     players: null,
@@ -105,7 +110,15 @@ function App() {
 
   function reducer(state, action) {
     switch (action.type) {
+      case "enterRoom": {
+        // debugger;
+        return {
+          ...state,
+          ...action.payload,
+        };
+      }
       case "joinRoom": {
+        // debugger;
         return {
           ...state,
           ...action.payload,
@@ -144,37 +157,21 @@ function App() {
     }
   }
 
-  useEffect(function onJoinRoom() {
-    console.debug("useEffect: page inited");
+  useEffect(function enterRoom() {
+    console.info('useEffect: enterRoom');
+    connect();
+    return () => close(1000, "Done");
+  }, []);
 
-    websocket = new WebSocket("ws://localhost:3001");
+  useEffect(function joinRoom() {
+    console.log('useEffect: joinRoom');
 
-    websocket.onopen = (e) => {
-      console.log("[open] connection established");
-      websocket.send(
-        JSON.stringify({
-          type: "joinRoom",
-          payload: {
-            playerName: state.playerName,
-          },
-        })
-      );
-    };
+    const { players } = state;
 
-    websocket.onmessage = (e) => {
-      console.log(`message received from server: ${e.data}`);
-      const response = JSON.parse(e.data);
-
-      dispatch(response);
-    };
-
-    websocket.onclose = (e) => {
-      if (e.wasClean) {
-        console.log(
-          `[close] connection closed cleanly, code=${e.code}, reason=${e.reason}`
-        );
-      } else {
-        console.error("[close] connection died");
+    if (players === null) {
+      sendMessage({ type: 'enterRoom', payload: {} });
+    } else if (Object.keys(players).length < MAX_PLAYERS && !(playerName in players)) {
+      sendMessage({ type: 'joinRoom', payload: { playerName }});
       }
   }, [connected, state.players]);
 
@@ -219,22 +216,7 @@ function App() {
 
   return (
     <>
-      <div className="players">
-        <h4>Players</h4>
-        {sortBy(([_, setsFound]) => setsFound.length)(
-          toPairs(state.players)
-        ).map(([playerName, setsFound]) => (
-          <li
-            className={classNames("player", {
-              myself: playerName == state.playerName,
-            })}
-            key={playerName}
-          >
-            <div>{playerName}</div>
-            <div>{setsFound.length}</div>
-          </li>
-        ))}
-      </div>
+      {state.players && <Players players={state.players} myName={playerName} />}
 
       <div
         className={classNames("board", "container")}
