@@ -132,15 +132,8 @@ function App() {
 
   function reducer(state, action) {
     switch (action.type) {
-      case "enterRoom": {
-        // debugger;
-        return {
-          ...state,
-          ...action.payload,
-        };
-      }
+      case "enterRoom": 
       case "joinRoom": {
-        // debugger;
         return {
           ...state,
           ...action.payload,
@@ -226,7 +219,7 @@ function App() {
 
       <div className={classNames("board", "container")}>
         {isEmpty(state.board) ? (
-          <button onClick={onStartClicked}>start game</button>
+          <button className="startButton" onClick={onStartClicked}>start game</button>
         ) : (
           splitEvery(3, toPairs(state.board)).map((triple) => (
             <div className="pure-g card-row">
