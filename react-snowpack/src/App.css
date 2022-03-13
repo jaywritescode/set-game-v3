@@ -6,19 +6,3 @@
 .card-row {
   height: 14%;
 }
-
-.players {
-  display: table;
-}
-
-.players > h4 {
-  display: table-header-group;
-}
-
-.players > li {
-  display: table-row;
-}
-
-.players > li > div {
-  display: table-cell;
-}

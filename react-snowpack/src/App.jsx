@@ -42,16 +42,21 @@ const useWebsocket = (onMessage) => {
   const [connected, setConnected] = useState(false);
 
   const connect = useCallback(() => {
-    console.log('useWebsocket: connect');
+    console.log("useWebsocket: connect");
     setWebSocket(new WebSocket("ws://localhost:3001"));
   }, []);
 
-  const sendMessage = useCallback((args) => {
-    console.log('useWebsocket: sendMessage');
-    if (!ws) { return; }
+  const sendMessage = useCallback(
+    (args) => {
+      console.log("useWebsocket: sendMessage");
+      if (!ws) {
+        return;
+      }
 
-    ws.send(JSON.stringify(args))
-  }, [ws]);
+      ws.send(JSON.stringify(args));
+    },
+    [ws]
+  );
 
   const onClose = useCallback((e) => {
     if (e.wasClean) {
@@ -64,43 +69,60 @@ const useWebsocket = (onMessage) => {
     setConnected(false);
   }, []);
 
-  const close = useCallback((code, msg) => {
-    ws.close(code, msg);
-  }, [ws]);
+  const close = useCallback(
+    (code, msg) => {
+      ws.close(code, msg);
+    },
+    [ws]
+  );
 
   // useEffect to make sure the websocket exists before you try adding event handlers to it
-  useEffect(function setOpenHandler() {
-    console.log('setOpenHandler');
-    if (!ws) { return; }
-    ws.addEventListener('open', (e) => {
-      console.info('[open] connection established');
-      setConnected(true);
-    });
-    return () => ws.removeEventListener('open');
-  }, [ws]);
+  useEffect(
+    function setOpenHandler() {
+      console.log("setOpenHandler");
+      if (!ws) {
+        return;
+      }
+      ws.addEventListener("open", (e) => {
+        console.info("[open] connection established");
+        setConnected(true);
+      });
+      return () => ws.removeEventListener("open");
+    },
+    [ws]
+  );
 
-  useEffect(function setMessageHandler() {
-    console.log('setMessageHandler');
-    if (!ws) { return; }
-    ws.addEventListener('message', (e) => {
-      console.info(`[message]: ${e.data}`);
-      onMessage(JSON.parse(e.data));
-    });
-    return () => ws.removeEventListener('message');
-  }, [ws]);
+  useEffect(
+    function setMessageHandler() {
+      console.log("setMessageHandler");
+      if (!ws) {
+        return;
+      }
+      ws.addEventListener("message", (e) => {
+        console.info(`[message]: ${e.data}`);
+        onMessage(JSON.parse(e.data));
+      });
+      return () => ws.removeEventListener("message");
+    },
+    [ws]
+  );
 
-  useEffect(function setCloseHandler() {
-    console.log('setCloseHandler');
-    if (!ws) { return; }
-    ws.addEventListener('close', onClose);
-    return () => ws.removeEventListener('close');
-  }, [ws]);
+  useEffect(
+    function setCloseHandler() {
+      console.log("setCloseHandler");
+      if (!ws) {
+        return;
+      }
+      ws.addEventListener("close", onClose);
+      return () => ws.removeEventListener("close");
+    },
+    [ws]
+  );
 
   return [connect, sendMessage, close, connected];
-}
+};
 
 function App() {
-  
   const [state, dispatch] = useReducer(reducer, {
     board: Object.create(null),
     players: null,
@@ -158,43 +180,27 @@ function App() {
   }
 
   useEffect(function enterRoom() {
-    console.info('useEffect: enterRoom');
+    console.info("useEffect: enterRoom");
     connect();
     return () => close(1000, "Done");
   }, []);
 
-  useEffect(function joinRoom() {
-    console.log('useEffect: joinRoom');
-
-    const { players } = state;
-
-    if (players === null) {
-      sendMessage({ type: 'enterRoom', payload: {} });
-    } else if (Object.keys(players).length < MAX_PLAYERS && !(playerName in players)) {
-      sendMessage({ type: 'joinRoom', payload: { playerName }});
-      }
-  }, [connected, state.players]);
-
   useEffect(
-    function onCardSelected() {
-      console.log("useEffect: card selected");
+    function joinRoom() {
+      console.log("useEffect: joinRoom");
 
-      const selected = toPairs(state.board)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([card, _]) => card);
-      if (selected.length == 3) {
-        websocket.send(
-          JSON.stringify({
-            type: "submit",
-            payload: {
-              cards: selected.map(strToCard),
-              player: state.playerName,
-            },
-          })
-        );
+      const { players } = state;
+
+      if (players === null) {
+        sendMessage({ type: "enterRoom", payload: {} });
+      } else if (
+        Object.keys(players).length < MAX_PLAYERS &&
+        !(playerName in players)
+      ) {
+        sendMessage({ type: "joinRoom", payload: { playerName } });
       }
     },
-    [state.board]
+    [connected, state.players]
   );
 
   const onStartClicked = () => {
@@ -218,9 +224,7 @@ function App() {
     <>
       {state.players && <Players players={state.players} myName={playerName} />}
 
-      <div
-        className={classNames("board", "container")}
-      >
+      <div className={classNames("board", "container")}>
         {isEmpty(state.board) ? (
           <button onClick={onStartClicked}>start game</button>
         ) : (

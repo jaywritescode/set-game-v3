@@ -13,7 +13,3 @@
 .isSelected {
   border: 1px solid black;
 }
-
-.card {
-  filter: var(--use-colorblind-filter, 'none');
-}

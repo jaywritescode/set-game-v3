@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { toPairs } from "ramda";
 
 export default function Players(props) {
-
   const { players, myName } = props;
 
   return (
