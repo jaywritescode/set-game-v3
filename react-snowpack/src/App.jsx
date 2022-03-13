@@ -18,7 +18,7 @@ import Card from "./Card";
 import "./App.css";
 import "purecss";
 
-let websocket;
+const playerName = generate().dashed;
 
 const cardToStr = ({ number, color, shading, shape }) => {
   return [number, color, shading, shape].map(toLower).join("-");
@@ -98,8 +98,7 @@ const useWebsocket = (onMessage) => {
 function App() {
   const [state, dispatch] = useReducer(reducer, {
     board: Object.create(null),
-    playerName: generate().dashed,
-    players: [],
+    players: null,
   });
 
   const [connect, sendMessage, close, connected] = useWebsocket(dispatch);
