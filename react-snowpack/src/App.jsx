@@ -47,13 +47,13 @@ const useWebsocket = (onMessage) => {
   }, []);
 
   const sendMessage = useCallback(
-    (args) => {
+    (type, payload = {}) => {
       console.log("useWebsocket: sendMessage");
       if (!ws) {
         return;
       }
 
-      ws.send(JSON.stringify(args));
+      ws.send(JSON.stringify({ type, payload }));
     },
     [ws]
   );
@@ -185,12 +185,15 @@ function App() {
       const { players } = state;
 
       if (players === null) {
-        sendMessage({ type: "enterRoom", payload: {} });
-      } else if (
-        Object.keys(players).length < MAX_PLAYERS &&
-        !(playerName in players)
-      ) {
-        sendMessage({ type: "joinRoom", payload: { playerName } });
+        sendMessage("enterRoom");
+      }
+
+      if (playerName in players) {
+        return;
+      }
+
+      if (Object.keys(players).length < MAX_PLAYERS) {
+        sendMessage("joinRoom", { playerName });
       }
     },
     [connected, state.players]
