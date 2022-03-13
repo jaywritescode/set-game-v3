@@ -199,14 +199,7 @@ function App() {
     [connected, state.players]
   );
 
-  const onStartClicked = () => {
-    websocket.send(
-      JSON.stringify({
-        type: "start",
-        payload: {},
-      })
-    );
-  };
+  const onStartClicked = () => sendMessage("start");
 
   const onCardClicked = (card) => {
     console.log("onCardClicked: ", card);
@@ -222,7 +215,9 @@ function App() {
 
       <div className={classNames("board", "container")}>
         {isEmpty(state.board) ? (
-          <button className="startButton" onClick={onStartClicked}>start game</button>
+          <button className="startButton" onClick={onStartClicked}>
+            start game
+          </button>
         ) : (
           splitEvery(3, toPairs(state.board)).map((triple) => (
             <div className="pure-g card-row">
