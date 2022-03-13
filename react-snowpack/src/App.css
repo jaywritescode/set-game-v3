@@ -1,6 +1,12 @@
+main {
+  display: flex;
+  flex-direction: column;
+}
+
 .board {
   overflow: hidden;
   border: 1px solid black;
+  flex-basis: 100%;
 }
 
 .card-row {
