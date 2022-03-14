@@ -145,18 +145,17 @@ function App() {
           ...state,
           board: payload.board.map(cardToStr),
         };
-      case "clickCard":
-        if (selected.includes(payload.card)) {
-          return {
-            ...state,
-            selected: without([payload.card], selected),
-          };
-        } else {
-          return {
-            ...state,
-            selected: [payload.card, ...selected],
-          };
-        }
+      case "deselectCard": {
+        return {
+          ...state,
+          selected: without([payload.card], selected),
+        };
+      }
+      case "selectCard":
+        return {
+          ...state,
+          selected: [payload.card, ...selected],
+        };
       case "submit":
         return {
           board: updateBoard(board, payload.board.map(cardToStr)),
@@ -233,8 +232,12 @@ function App() {
 
   const onCardClicked = (card) => {
     console.log("onCardClicked: ", card);
+
+    const { selected } = state;
+
+    const type = selected.includes(card) ? "deselectCard" : "selectCard";
     dispatch({
-      type: "clickCard",
+      type,
       payload: { card },
     });
   };
