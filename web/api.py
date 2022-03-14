@@ -66,6 +66,7 @@ class SetGameApi(WebSocketEndpoint):
     
     async def on_receive(self, websocket, data):
         actions = {
+            'enterRoom': self.handle_enter_room,
             'joinRoom': self.handle_join_room,
             'start': self.handle_start,
             'submit': self.handle_submit,
@@ -92,10 +93,13 @@ class SetGameApi(WebSocketEndpoint):
         await super().on_disconnect(websocket, close_code)
         self.connections.disconnect(websocket)
 
-    def handle_join_room(self, **kwargs):
+    def handle_enter_room(self, **kwargs):
         if not self.game:
             self.state.game = Game(seed=getattr(self.state, 'seed', None))
+        
+        return Message(game_schema.dump(self.game))
 
+    def handle_join_room(self, **kwargs):
         try:
             self.game.add_player(kwargs['playerName'])
             return Message(game_schema.dump(self.game), broadcast=True)
