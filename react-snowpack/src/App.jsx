@@ -8,8 +8,8 @@ import {
   isEmpty,
   splitEvery,
   toLower,
-  toPairs,
   toUpper,
+  without,
   zipObj,
 } from "ramda";
 
@@ -41,7 +41,7 @@ const useWebsocket = (onMessage) => {
   //  but managing connection state this way feels wrong.
   const [connected, setConnected] = useState(false);
 
-  const connect = useCallback(() => {
+  const connect = useCallback(async () => {
     console.log("useWebsocket: connect");
     setWebSocket(new WebSocket("ws://localhost:3001"));
   }, []);
@@ -124,36 +124,39 @@ const useWebsocket = (onMessage) => {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, {
-    board: Object.create(null),
+    board: [],
+    selected: [],
     players: null,
   });
 
   const [connect, sendMessage, close, connected] = useWebsocket(dispatch);
 
-  function reducer(state, action) {
-    switch (action.type) {
-      case "enterRoom": 
+  function reducer(state, { type, payload }) {
+    switch (type) {
+      case "enterRoom":
       case "joinRoom": {
         return {
           ...state,
-          ...action.payload,
+          ...payload,
         };
       }
       case "start":
-        let { board } = action.payload;
         return {
           ...state,
-          board: zipObj(board.map(cardToStr), board.map(F)),
+          board: payload.board.map(cardToStr),
         };
-      case "select_card":
-        let card = action.payload.card;
-        return {
-          ...state,
-          board: {
-            ...state.board,
-            [card]: !state.board[card],
-          },
-        };
+      case "clickCard":
+        if (state.selected.includes(payload.card)) {
+          return {
+            ...state,
+            selected: without([payload.card], state.selected),
+          }
+        } else {
+          return {
+            ...state,
+            selected: [payload.card, ...state.selected],
+          }
+        }
       case "submit":
         let current_board = Object.keys(state.board);
         let updated_board = action.payload.board.map(cardToStr);
@@ -172,39 +175,51 @@ function App() {
     }
   }
 
-  useEffect(function enterRoom() {
-    console.info("useEffect: enterRoom");
+  useEffect(function roomEntered() {
+    console.info("useEffect: roomEntered");
     connect();
     return () => close(1000, "Done");
   }, []);
 
-  useEffect(
-    function joinRoom() {
-      console.log("useEffect: joinRoom");
+  useEffect(function connectionEstablished() {
+    console.log('useEffect: connectionEstablished');
 
-      const { players } = state;
+    if (!connected) { return; }
 
-      if (players === null) {
-        sendMessage("enterRoom");
-      }
+    const { players } = state;
 
-      if (playerName in players) {
-        return;
-      }
+    players === null && sendMessage("enterRoom");
+  }, [connected]);
 
-      if (Object.keys(players).length < MAX_PLAYERS) {
-        sendMessage("joinRoom", { playerName });
-      }
-    },
-    [connected, state.players]
-  );
+  useEffect(function joinGameIfPossible() {
+    console.log('useEffect: joinGameIfPossible');
+
+    const { players } = state;
+
+    if (players === null) { return; }
+
+    !(playerName in players) && Object.keys(players).length < MAX_PLAYERS && sendMessage("joinRoom", { playerName });
+  }, [state.players]);
+
+  useEffect(function cardSelected() {
+    console.log('useEffect: cardSelected');
+
+    const { selected } = state;
+
+    if (selected.length == 3) {
+      sendMessage("submit", {
+        cards: selected.map(strToCard),
+        player: playerName,
+      });
+    }
+  }, [state.selected])
 
   const onStartClicked = () => sendMessage("start");
 
   const onCardClicked = (card) => {
     console.log("onCardClicked: ", card);
     dispatch({
-      type: "select_card",
+      type: "clickCard",
       payload: { card },
     });
   };
@@ -219,13 +234,13 @@ function App() {
             start game
           </button>
         ) : (
-          splitEvery(3, toPairs(state.board)).map((triple) => (
+          splitEvery(3, state.board).map((cards) => (
             <div className="pure-g card-row">
-              {triple.map(([card, isSelected]) => (
+              {cards.map((card) => (
                 <Card
                   card={card}
                   key={card}
-                  isSelected={isSelected}
+                  isSelected={state.selected.includes(card)}
                   onClick={() => onCardClicked(card)}
                 />
               ))}
