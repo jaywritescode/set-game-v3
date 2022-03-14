@@ -16,6 +16,7 @@ requests = "*"
 playwright = "*"
 pytest-playwright = "*"
 pytest-asyncio = "*"
+assertpy = "*"
 
 [requires]
 python_version = "3.9"

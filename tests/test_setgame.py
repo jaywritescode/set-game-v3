@@ -1,3 +1,4 @@
+from assertpy import soft_assertions, assert_that
 from itertools import product
 import marshmallow_dataclass
 import pytest
@@ -76,22 +77,19 @@ class TestGame:
         standard_game.add_player('ron')
         standard_game.add_player('jeff')
 
-        the_set = frozenset({ 
+        the_set = { 
             Card(Number.THREE, Color.GREEN, Shading.SOLID, Shape.OVAL),
             Card(Number.ONE, Color.RED, Shading.EMPTY, Shape.SQUIGGLE),
             Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.DIAMOND)
-        })
+        }
         result = standard_game.accept_set(the_set, player='ron')
 
-        assert result
-        for card in the_set:
-            assert card not in standard_game.board
-        assert len(standard_game.board) == 12
-        assert len(standard_game.board) + len(standard_game.cards) == 78
-        assert standard_game.players == {
-            'ron': [the_set],
-            'jeff': []
-        }
+        with soft_assertions():
+            assert_that(result).is_true()
+            assert_that(standard_game.board).does_not_contain(the_set).is_length(12)
+            assert_that(list(standard_game.board) + list(standard_game.cards)).is_length(78)
+            assert_that(standard_game.players['ron']).is_equal_to([the_set])
+            assert_that(standard_game.players['jeff']).is_empty()        
 
     def test_accept_set_with_valid_set_then_no_sets_in_next_twenty_cards(self, largest_game):
         largest_game.add_player('ron')
@@ -99,22 +97,20 @@ class TestGame:
 
         largest_game.start()
 
-        the_set = frozenset({
+        the_set = {
             Card(Number.TWO, Color.BLUE, Shading.SOLID, Shape.OVAL),
             Card(Number.TWO, Color.BLUE, Shading.EMPTY, Shape.OVAL),
             Card(Number.TWO, Color.BLUE, Shading.STRIPED, Shape.OVAL),
-        })
+        }
         result = largest_game.accept_set(the_set, player="jeff")
 
-        assert result
-        for card in the_set:
-            assert card not in largest_game.board
-        assert len(largest_game.board) == 21
-        assert len(largest_game.board) + len(largest_game.cards) == 78
-        assert largest_game.players == {
-            'ron': [],
-            'jeff': [the_set]
-        }
+        with soft_assertions():
+            assert_that(result).is_true()
+            assert_that(largest_game.board).does_not_contain(the_set).is_length(21)
+            assert_that(list(largest_game.board) + list(largest_game.cards)).is_length(78)
+            assert_that(largest_game.players['jeff']).is_equal_to([the_set])
+            assert_that(largest_game.players['ron']).is_empty()  
+
 
     def test_accept_set_fails_with_invalid_set(self, standard_game):
         standard_game.add_player('ron')

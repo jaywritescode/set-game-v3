@@ -93,19 +93,25 @@ class Game:
         self.players[name] = list()
 
     def accept_set(self, cards, *, player):
+        """Takes a set, submitted by player, and updates the game state.
+
+        :param cards: a collection of cards
+        :param player: the player name
+        :return: True if the set is valid, otherwise False
+        """
         if not all(card in self.board for card in cards):
-            return None
+            return False
 
         if not is_set(cards):
-            return None
+            return False
 
         for card in cards:
             self.board.remove(card)
 
-        self.players[player].append(dict.fromkeys(cards))
+        self.players[player].append(cards)
         
         self.deal()
-        return self.board
+        return True
 
     def has_set(self):
         return contains_set(self.board)
