@@ -3,8 +3,6 @@ import classNames from "classnames";
 import generate from "project-name-generator";
 import {
   difference,
-  F,
-  includes,
   isEmpty,
   splitEvery,
   toLower,
@@ -132,6 +130,8 @@ function App() {
   const [connect, sendMessage, close, connected] = useWebsocket(dispatch);
 
   function reducer(state, { type, payload }) {
+    const { board, selected } = state;
+
     switch (type) {
       case "enterRoom":
       case "joinRoom": {
@@ -146,32 +146,32 @@ function App() {
           board: payload.board.map(cardToStr),
         };
       case "clickCard":
-        if (state.selected.includes(payload.card)) {
+        if (selected.includes(payload.card)) {
           return {
             ...state,
-            selected: without([payload.card], state.selected),
-          }
+            selected: without([payload.card], selected),
+          };
         } else {
           return {
             ...state,
-            selected: [payload.card, ...state.selected],
-          }
+            selected: [payload.card, ...selected],
+          };
         }
       case "submit":
-        let current_board = Object.keys(state.board);
-        let updated_board = action.payload.board.map(cardToStr);
-
-        let r = difference(current_board, updated_board);
-        let n = difference(updated_board, current_board);
-
-        let newboard = current_board.map((k) =>
-          includes(k, r) ? n.shift() : k
-        );
         return {
-          ...state,
-          board: zipObj(newboard, newboard.map(F)),
-          players: action.payload.players,
+          board: updateBoard(board, payload.board.map(cardToStr)),
+          selected: [],
+          players: payload.players,
         };
+    }
+
+    function updateBoard(prevBoard, newBoard) {
+      const cardsToRemove = difference(prevBoard, newBoard);
+      const cardsToAdd = difference(newBoard, prevBoard);
+
+      return prevBoard.map((card) =>
+        cardsToRemove.includes(card) ? cardsToAdd.shift() : card
+      );
     }
   }
 
@@ -181,38 +181,53 @@ function App() {
     return () => close(1000, "Done");
   }, []);
 
-  useEffect(function connectionEstablished() {
-    console.log('useEffect: connectionEstablished');
+  useEffect(
+    function connectionEstablished() {
+      console.log("useEffect: connectionEstablished");
 
-    if (!connected) { return; }
+      if (!connected) {
+        return;
+      }
 
-    const { players } = state;
+      const { players } = state;
 
-    players === null && sendMessage("enterRoom");
-  }, [connected]);
+      players === null && sendMessage("enterRoom");
+    },
+    [connected]
+  );
 
-  useEffect(function joinGameIfPossible() {
-    console.log('useEffect: joinGameIfPossible');
+  useEffect(
+    function joinGameIfPossible() {
+      console.log("useEffect: joinGameIfPossible");
 
-    const { players } = state;
+      const { players } = state;
 
-    if (players === null) { return; }
+      if (players === null) {
+        return;
+      }
 
-    !(playerName in players) && Object.keys(players).length < MAX_PLAYERS && sendMessage("joinRoom", { playerName });
-  }, [state.players]);
+      !(playerName in players) &&
+        Object.keys(players).length < MAX_PLAYERS &&
+        sendMessage("joinRoom", { playerName });
+    },
+    [state.players]
+  );
 
-  useEffect(function cardSelected() {
-    console.log('useEffect: cardSelected');
+  useEffect(
+    function cardSelected() {
+      console.log("useEffect: cardSelected");
 
-    const { selected } = state;
+      const { selected } = state;
 
-    if (selected.length == 3) {
-      sendMessage("submit", {
-        cards: selected.map(strToCard),
-        player: playerName,
-      });
-    }
-  }, [state.selected])
+      if (selected.length == 3) {
+        sendMessage("submit", {
+          cards: selected.map(strToCard),
+          player: playerName,
+        });
+      }
+    },
+    [state.selected]
+  );
 
   const onStartClicked = () => sendMessage("start");
 
