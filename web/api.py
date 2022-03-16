@@ -94,6 +94,8 @@ class SetGameApi(WebSocketEndpoint):
         self.connections.disconnect(websocket)
 
     def handle_enter_room(self, **kwargs):
+        """Upon the user entering the room, we need to get the game state.
+        """
         if not self.game:
             self.state.game = Game(seed=getattr(self.state, 'seed', None))
         
@@ -108,12 +110,11 @@ class SetGameApi(WebSocketEndpoint):
 
     def handle_start(self, **kwargs):
         if self.game.is_started():
-            return Message({ 'error': 'game is already started '})
+            return Message({ 'error': 'game is already started' })
 
         self.game.start()
         return Message(game_schema.dump(self.game), broadcast=True)        
         
-
     def handle_submit(self, **kwargs):
         if not self.game.is_started():
             raise
