@@ -1,4 +1,4 @@
-import json
+from assertpy import soft_assertions, assert_that
 import pytest
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
@@ -13,43 +13,46 @@ from web.api import app
 def sample_game(shuffled_deck):
     game = Game(shuffler=lambda x: x)
     game.cards = shuffled_deck[:]
-    return game
+    yield game
+    game.reset()
 
 
-def test_join_room_no_game():
+def test_enter_room_empty():
     client = TestClient(app)
-    with client.websocket_connect('/') as websocket:
-        websocket.send_json({ 
-            'type': 'joinRoom',
+    with client.websocket_connect('/') as ws:
+        ws.send_json({
+            'type': 'enterRoom',
+            'payload': {}
+        })
+        assert_that(app.state.connections.active_connections).is_length(1)
+
+        data = ws.receive_json()
+        assert_that(data).is_equal_to({
+            'type': 'enterRoom',
             'payload': {
-                'newPlayer': 'cute-porpoise-9887'
+                'board': [],
+                'players': {}
             }
         })
-        assert len(app.state.connections.active_connections) == 1
-
-        data = websocket.receive_json()
-        assert data == { 
-            'type': 'joinRoom',
-            'payload': {
-                'players': [{
-                    'cute-porpoise-9887': 0,
-                }],
-                'board': []
-            }
-        }
 
 
+def test_enter_room_game_in_progress(sample_game):
+    app.state.game = sample_game
+    app.state.game.add_player('louis')
+    app.state.game.add_player('tom')
+    app.state.game.start()
 
-def test_start_game_not_started(sample_game):
     client = TestClient(app)
-    with client.websocket_connect('/') as websocket:
-        app.state.game = sample_game
+    with client.websocket_connect('/') as ws:
+        ws.send_json({
+            'type': 'enterRoom',
+            'payload': {}
+        })
 
-        websocket.send_json({ 'type': 'start' })
-        data = websocket.receive_json()
-        assert data == {
-            'type': 'start',
-            'board': [
+        data = ws.receive_json()
+        with soft_assertions():
+            assert_that(data).has_type('enterRoom')
+            assert_that(data['payload']['board']).contains_only(
                 { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
                 { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
                 { 'number': 'THREE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'OVAL' },
@@ -62,5 +65,101 @@ def test_start_game_not_started(sample_game):
                 { 'number': 'ONE', 'color': 'BLUE', 'shading': 'SOLID', 'shape': 'DIAMOND' },
                 { 'number': 'THREE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'OVAL' },
                 { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'DIAMOND' },
-            ]
-        }
+            )
+            assert_that(data['payload']['players']).is_equal_to({
+                'louis': [],
+                'tom': []
+            })
+
+
+def test_join_room_no_players():
+    client = TestClient(app)
+    with client.websocket_connect('/') as ws:
+        ws.send_json({ 'type': 'enterRoom', 'payload': {} })
+        ws.receive_json()
+
+        ws.send_json({
+            'type': 'joinRoom',
+            'payload': { 'playerName': 'todd' }
+        })        
+        data = ws.receive_json()
+        assert_that(app.state.game.players).contains('todd')
+        assert_that(data).is_equal_to({
+            'type': 'joinRoom',
+            'payload': {
+                'board': [],
+                'players': {
+                    'todd': []
+                }
+            }
+        })
+
+
+def test_join_room_with_multiple_players():
+    client = TestClient(app)
+    with client.websocket_connect('/') as ws:
+        ws.send_json({ 'type': 'enterRoom', 'payload': {} })
+        ws.receive_json()
+        ws.send_json({
+            'type': 'joinRoom',
+            'payload': { 'playerName': 'todd' }
+        })
+        ws.receive_json()
+
+        ws.send_json({ 'type': 'enterRoom', 'payload': {} })
+        ws.receive_json()
+        ws.send_json({
+            'type': 'joinRoom',
+            'payload': { 'playerName': 'larry' }
+        })
+        ws.receive_json()
+
+        ws.send_json({ 'type': 'enterRoom', 'payload': {} })
+        ws.receive_json()
+        ws.send_json({
+            'type': 'joinRoom',
+            'payload': { 'playerName': 'frank' }
+        })
+        data = ws.receive_json()
+
+        assert_that(app.state.game.players).contains('todd', 'larry', 'frank')
+        assert_that(data).is_equal_to({
+            'type': 'joinRoom',
+            'payload': {
+                'board': [],
+                'players': {
+                    'todd': [],
+                    'larry': [],
+                    'frank': [],
+                }
+            }
+        })
+
+
+def test_start_game(sample_game):
+    app.state.game = sample_game
+    app.state.game.add_player('doug')
+    app.state.game.add_player('gene')
+
+    client = TestClient(app)
+    with client.websocket_connect('/') as ws:
+        ws.send_json({ 'type': 'start', 'payload': {} })
+        data = ws.receive_json()
+
+        with soft_assertions():
+            assert_that(data).has_type('start')
+            assert_that(data['payload']['board']).contains_only(
+                { 'number': 'THREE', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'OVAL' },
+                { 'number': 'ONE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+                { 'number': 'THREE', 'color': 'RED', 'shading': 'EMPTY', 'shape': 'OVAL' },
+                { 'number': 'TWO', 'color': 'BLUE', 'shading': 'STRIPED', 'shape': 'DIAMOND' },
+                { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'DIAMOND' },
+                { 'number': 'TWO', 'color': 'GREEN', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
+                { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'SQUIGGLE' },
+                { 'number': 'ONE', 'color': 'GREEN', 'shading': 'EMPTY', 'shape': 'SQUIGGLE' },
+                { 'number': 'TWO', 'color': 'GREEN', 'shading': 'EMPTY', 'shape': 'OVAL' },
+                { 'number': 'ONE', 'color': 'BLUE', 'shading': 'SOLID', 'shape': 'DIAMOND' },
+                { 'number': 'THREE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'OVAL' },
+                { 'number': 'ONE', 'color': 'RED', 'shading': 'SOLID', 'shape': 'DIAMOND' },
+            )
+            assert_that(data['payload']['players']).is_equal_to({ 'doug': [], 'gene': [] })
