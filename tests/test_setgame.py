@@ -1,5 +1,6 @@
+from collections import deque
+from unittest.mock import create_autospec
 from assertpy import soft_assertions, assert_that
-from itertools import product
 import marshmallow_dataclass
 import pytest
 
@@ -17,7 +18,7 @@ def standard_game(shuffled_deck, test_game):
     A quote-unquote normal game, where there's always only twelve cards on the board
     and at least one Set on the board.
     """
-    test_game.cards = shuffled_deck[:]
+    test_game.cards = deque(shuffled_deck)
     return test_game
 
 @pytest.fixture
@@ -25,7 +26,7 @@ def large_game(needs_extra_cards, test_game):
     """
     No Sets in the first sixteen cards drawn, so we need to draw eighteen to start.
     """
-    test_game.cards = needs_extra_cards[:]
+    test_game.cards = deque(needs_extra_cards)
     return test_game
 
 @pytest.fixture
@@ -34,43 +35,59 @@ def largest_game(deals_extra_cards_after_first_set, test_game):
     The first three cards drawn form a Set, but then there's no Set in the following
     twenty cards. Any twenty-one cards is guaranteed to have at least one Set.
     """
-    test_game.cards = deals_extra_cards_after_first_set[:]
+    test_game.cards = deque(deals_extra_cards_after_first_set)
     return test_game
 
-class TestGame:
-    def test_start_with_at_least_one_set_in_first_twelve_cards(self, standard_game):
-        standard_game.start()
+def test_start():
+    def shuffle_fn(game):
+        pass
 
-        assert len(standard_game.board) == 12
-        assert len(standard_game.board) + len(standard_game.cards) == 81
+    game = Game(shuffler=create_autospec(shuffle_fn))
+    game.start()
 
-    def test_start_with_no_sets_in_the_first_twelve_cards(self, large_game):
-        large_game.start()
+    game.shuffler.assert_called()
+    assert_that(game.board).is_not_empty()
 
-        assert len(large_game.board) == 18
-        assert len(large_game.board) + len(large_game.cards) == 81
 
-    def test_add_player_game_not_started(self, standard_game):
+class TestDeal:
+    def test_it_deals_twelve_cards_if_possible(self, standard_game):
+        with soft_assertions():
+            assert_that(standard_game.deal()).is_true()
+            assert_that(standard_game.board).is_length(12)
+            assert_that(standard_game.cards).is_length(69)
+
+    def test_it_deals_extra_cards_if_necessary(self, large_game):
+        with soft_assertions():
+            assert_that(large_game.deal()).is_true()
+            assert_that(large_game.board).is_length(18)
+            assert_that(large_game.cards).is_length(63)
+
+    def test_it_stops_dealing_at_the_end_of_the_deck(self, large_game):
+        with soft_assertions():
+            pass
+
+
+class TestAddPlayer:
+    def test_it_adds_a_player(self, standard_game):
         standard_game.add_player('ron')
         standard_game.add_player('jeff')
 
-        assert standard_game.players == {
-            'ron': [],
-            'jeff': []
-        }
+        assert_that(standard_game.players).is_equal_to({ 'ron': [], 'jeff': [] })
 
-    def test_add_player_cannot_add_duplicate_player(self, standard_game):
+    def test_it_can_only_add_a_player_once(self, standard_game):
         standard_game.add_player('ron')
         standard_game.add_player('jeff')
-        
+
         with pytest.raises(ValueError):
             standard_game.add_player('ron')
 
-        assert standard_game.players == {
-            'ron': [],
-            'jeff': []
-        }        
+        assert_that(standard_game.players).is_equal_to({ 'ron': [], 'jeff': [] })
 
+
+
+
+
+class TestGame:      
     def test_accept_set_with_valid_set(self, standard_game):
         standard_game.start()
 
@@ -110,7 +127,6 @@ class TestGame:
             assert_that(list(largest_game.board) + list(largest_game.cards)).is_length(78)
             assert_that(largest_game.players['jeff']).is_equal_to([the_set])
             assert_that(largest_game.players['ron']).is_empty()  
-
 
     def test_accept_set_fails_with_invalid_set(self, standard_game):
         standard_game.add_player('ron')

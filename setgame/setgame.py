@@ -56,35 +56,38 @@ def deck():
 
 class Game:
     def __init__(self, shuffler=random.shuffle, seed=None):
-        self.reset()
         self.shuffler = shuffler
-        self.seed = seed
+        if seed is not None:
+            random.seed(seed)
+
+        self.reset()
 
     def reset(self):
-        self.cards = deck()
+        self.cards = deque(deck())
         self.board = []
         self.players = dict()
 
     def start(self):
         if self.is_started():
             return
+        
+        self.shuffle()
+        self.deal()
 
-        if self.seed is not None:
-            random.seed(self.seed)
-
+    def shuffle(self):
         self.shuffler(self.cards)
         self.cards = deque(self.cards)
-        
-        self.deal()
 
     def deal(self):
         while len(self.board) < 12 or not self.has_set():
             if not self.cards:
-                # no more cards, game over
-                return True
+                return False
 
             for _ in range(3):
                 self.board.append(self.cards.popleft())
+
+        # True means there are at least twelve cards and at least one set on the board.
+        return True
 
     def add_player(self, name):
         if name in self.players:
