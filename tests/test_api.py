@@ -1,10 +1,6 @@
 from assertpy import soft_assertions, assert_that
 import pytest
-from starlette.applications import Starlette
-from starlette.endpoints import WebSocketEndpoint
-from starlette.routing import WebSocketRoute
 from starlette.testclient import TestClient
-from starlette.websockets import WebSocket
 
 from setgame.setgame import Game
 from web.api import app
