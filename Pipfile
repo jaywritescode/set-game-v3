@@ -17,6 +17,7 @@ playwright = "*"
 pytest-playwright = "*"
 pytest-asyncio = "*"
 assertpy = "*"
+black = "*"
 
 [requires]
 python_version = "3.9"
