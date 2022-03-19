@@ -4,13 +4,14 @@ from enum import Enum
 from itertools import combinations, product
 import random
 
-Number = Enum('Number', 'ONE TWO THREE', start=0)
+Number = Enum("Number", "ONE TWO THREE", start=0)
 
-Color = Enum('Color', 'RED BLUE GREEN', start=0)
+Color = Enum("Color", "RED BLUE GREEN", start=0)
 
-Shading = Enum('Shading', 'EMPTY SOLID STRIPED', start=0)
+Shading = Enum("Shading", "EMPTY SOLID STRIPED", start=0)
 
-Shape = Enum('Shape', 'DIAMOND OVAL SQUIGGLE', start=0)
+Shape = Enum("Shape", "DIAMOND OVAL SQUIGGLE", start=0)
+
 
 @dataclass(frozen=True)
 class Card:
@@ -20,7 +21,11 @@ class Card:
     shape: Shape
 
     def index(self):
-        return sum(getattr(self, field.name).value * (3 ** i) for (i, field) in enumerate(fields(Card)))
+        return sum(
+            getattr(self, field.name).value * (3**i)
+            for (i, field) in enumerate(fields(Card))
+        )
+
 
 def is_set(cards):
     if len(cards) != 3:
@@ -31,6 +36,7 @@ def is_set(cards):
             return False
     return True
 
+
 def complete_set(c, d):
     number = Number(-(c.number.value + d.number.value) % 3)
     color = Color(-(c.color.value + d.color.value) % 3)
@@ -38,17 +44,20 @@ def complete_set(c, d):
     shape = Shape(-(c.shape.value + d.shape.value) % 3)
     return Card(number, color, shading, shape)
 
+
 def contains_set(cards):
     """
     Determines if there's at least one Set in the given collection of Cards.
     """
     return any(complete_set(*pair) in cards for pair in combinations(cards, 2))
 
+
 def find_set(cards):
     for pair in combinations(cards, 2):
         k = complete_set(*pair)
         if k in cards:
             return (pair[0], pair[1], k)
+
 
 def deck():
     return [Card(*attrs) for attrs in product(Number, Color, Shading, Shape)]
@@ -70,7 +79,7 @@ class Game:
     def start(self):
         if self.is_started():
             return
-        
+
         self.shuffle()
         self.deal()
 
@@ -112,7 +121,7 @@ class Game:
             self.board.remove(card)
 
         self.players[player].append(cards)
-        
+
         self.deal()
         return True
 
@@ -123,10 +132,10 @@ class Game:
         return self.board
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import marshmallow_dataclass
     from pprint import pprint
-    
+
     deck = deck()
 
     capset = [
@@ -149,7 +158,7 @@ if __name__ == '__main__':
         Card(Number.THREE, Color.BLUE, Shading.STRIPED, Shape.SQUIGGLE),
         Card(Number.THREE, Color.GREEN, Shading.STRIPED, Shape.OVAL),
         Card(Number.THREE, Color.RED, Shading.EMPTY, Shape.OVAL),
-        Card(Number.THREE, Color.RED, Shading.SOLID, Shape.OVAL)
+        Card(Number.THREE, Color.RED, Shading.SOLID, Shape.OVAL),
     ]
     set = [
         Card(Number.TWO, Color.BLUE, Shading.SOLID, Shape.OVAL),
@@ -159,7 +168,6 @@ if __name__ == '__main__':
 
     for card in capset + set:
         deck.remove(card)
-    
 
     CardSchema = marshmallow_dataclass.class_schema(Card)()
 
