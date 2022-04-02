@@ -6,7 +6,7 @@ from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
-from setgame.setgame import Game, deck
+from setgame.setgame import Game, deck, find_set
 from web.serialize import CardSchema, GameSchema
 
 templates = Jinja2Templates(directory="templates", extensions=["jinja2.ext.debug"])
@@ -62,6 +62,8 @@ class SetGameApi(WebSocketEndpoint):
         return getattr(self.state, "game", None)
 
     async def on_connect(self, websocket):
+        if 'seed' in websocket.query_params:
+            self.state.seed = int(websocket.query_params['seed'])
         await self.connections.accept(websocket)
 
     async def on_receive(self, websocket, data):
@@ -70,6 +72,7 @@ class SetGameApi(WebSocketEndpoint):
             "joinRoom": self.handle_join_room,
             "start": self.handle_start,
             "submit": self.handle_submit,
+            "find_set": self.handle_find_set,
         }
 
         args = json.loads(data)
@@ -122,6 +125,9 @@ class SetGameApi(WebSocketEndpoint):
             return Message({"error": "invalid"})
 
         return Message(game_schema.dump(self.game), broadcast=True)
+
+    def handle_find_set(self, **kwargs):
+        return Message(CardSchema.dump(find_set(self.game.board), many=True))
 
 
 app = Starlette(

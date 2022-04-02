@@ -163,6 +163,9 @@ function App() {
           selected: [],
           players: payload.players,
         };
+      case "find_set":
+        console.log(payload.map(cardToStr));
+        return state;
     }
 
     function updateBoard(prevBoard, newBoard) {
@@ -243,9 +246,15 @@ function App() {
     });
   };
 
+  const onFindSetClicked = () => {
+    sendMessage("find_set");
+  }
+
   return (
     <>
       {state.players && <Players players={state.players} myName={playerName} />}
+
+      <button onClick={onFindSetClicked}>find set</button>
 
       <div className={classNames("board", "container")}>
         {isEmpty(state.board) ? (
