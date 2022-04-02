@@ -2,6 +2,7 @@ import React, { useState, useReducer, useEffect, useCallback } from "react";
 import classNames from "classnames";
 import generate from "project-name-generator";
 import {
+  concat,
   difference,
   isEmpty,
   splitEvery,
@@ -168,9 +169,9 @@ function App() {
       const cardsToRemove = difference(prevBoard, newBoard);
       const cardsToAdd = difference(newBoard, prevBoard);
 
-      return prevBoard.map((card) =>
+      return concat(prevBoard.map((card) =>
         cardsToRemove.includes(card) ? cardsToAdd.shift() : card
-      );
+      ), cardsToAdd);
     }
   }
 
