@@ -42,7 +42,7 @@ const useWebsocket = (onMessage) => {
 
   const connect = useCallback(async () => {
     console.log("useWebsocket: connect");
-    setWebSocket(new WebSocket("ws://localhost:3001"));
+    setWebSocket(new WebSocket("ws://localhost:3001" + location.search));
   }, []);
 
   const sendMessage = useCallback(
