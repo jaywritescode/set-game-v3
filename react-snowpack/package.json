@@ -2,12 +2,16 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "echo \"This template does not include a test runner by default.\" && exit 1"
+    "test": "web-test-runner \"tests/**/*.test.jsx\""
   },
   "devDependencies": {
     "@snowpack/plugin-react-refresh": "^2.5.0",
+    "@snowpack/web-test-runner-plugin": "^0.2.2",
+    "@testing-library/react": "^13.0.0",
+    "@web/test-runner": "^0.13.27",
+    "chai": "^4.3.6",
     "prettier": "2.5.1",
-    "snowpack": "^3.3.7"
+    "snowpack": "^3.8.8"
   },
   "dependencies": {
     "classnames": "^2.3.1",
@@ -15,7 +19,7 @@
     "purecss": "^2.0.6",
     "ramda": "^0.28.0",
     "ramda-adjunct": "^3.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
