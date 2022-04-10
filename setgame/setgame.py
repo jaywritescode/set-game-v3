@@ -75,6 +75,7 @@ class Game:
         self.cards = deque(deck())
         self.board = []
         self.players = dict()
+        self.is_endgame = False
 
     def start(self):
         if self.is_started():
@@ -122,7 +123,8 @@ class Game:
 
         self.players[player].append(cards)
 
-        self.deal()
+        if not self.deal():
+            self.is_endgame = True
         return True
 
     def has_set(self):

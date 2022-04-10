@@ -67,7 +67,9 @@ class TestDeal:
             assert_that(large_game.board).is_length(18)
             assert_that(large_game.cards).is_length(63)
 
-    def test_it_stops_dealing_at_the_end_of_the_deck(self, large_game):
+    def test_it_stops_dealing_at_the_end_of_the_deck(self, needs_extra_cards):
+        game = Game(shuffler=lambda x: x)
+        game.cards = deque(needs_extra_cards)
         with soft_assertions():
             pass
 
@@ -89,7 +91,7 @@ class TestAddPlayer:
         assert_that(standard_game.players).is_equal_to({"ron": [], "jeff": []})
 
 
-class TestGame:
+class TestAcceptSet:
     def test_accept_set_with_valid_set(self, standard_game):
         standard_game.start()
 
