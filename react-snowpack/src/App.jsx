@@ -42,7 +42,11 @@ const useWebsocket = (onMessage) => {
 
   const connect = useCallback(async () => {
     console.log("useWebsocket: connect");
-    setWebSocket(new WebSocket("ws://localhost:3001" + location.search));
+    setWebSocket(new WebSocket("ws://localhost:3001/ws" + location.search));
+    // three red solid diamonds, one blue striped diamond, two green solid ovals
+    // two green striped ovals, two red solid squiggles, one blue solid diamond
+    // two green striped squiggles, one red striped squiggle, three blue empty diamonds
+    // two red solid diamonds, three green solid squiggles, two green solid squiggles
   }, []);
 
   const sendMessage = useCallback(

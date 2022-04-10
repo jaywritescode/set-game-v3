@@ -134,7 +134,7 @@ app = Starlette(
     debug=True,
     routes=[
         Route("/", index),
-        WebSocketRoute("/", SetGameApi),
+        WebSocketRoute("/ws", SetGameApi),
         Mount("/assets", StaticFiles(directory="assets"), name="static"),
     ],
 )
