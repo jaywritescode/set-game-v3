@@ -162,6 +162,9 @@ function App() {
           selected: [payload.card, ...selected],
         };
       case "submit":
+        if (payload.error) {
+          return state;
+        }
         return {
           board: updateBoard(board, payload.board.map(cardToStr)),
           selected: [],
@@ -269,6 +272,7 @@ function App() {
           splitEvery(3, state.board).map((cards) => (
             <div className="pure-g card-row">
               {cards.map((card) => (
+                // TODO: card can be null
                 <Card
                   card={card}
                   key={card}
