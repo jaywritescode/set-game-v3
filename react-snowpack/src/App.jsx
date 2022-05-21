@@ -11,6 +11,7 @@ import {
   without,
   zipObj,
 } from "ramda";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 import Card from "./Card";
 import Players from "./Players";
@@ -33,106 +34,20 @@ const strToCard = (string) => {
   );
 };
 
-const useWebsocket = (onMessage) => {
-  const [ws, setWebSocket] = useState(null);
-
-  // TODO: Doing this so that we don't try to send messages in the App f.c. when we're not connected.
-  //  but managing connection state this way feels wrong.
-  const [connected, setConnected] = useState(false);
-
-  const connect = useCallback(async () => {
-    console.log("useWebsocket: connect");
-    setWebSocket(new WebSocket("ws://localhost:3001/ws" + location.search));
-    // three red solid diamonds, one blue striped diamond, two green solid ovals
-    // two green striped ovals, two red solid squiggles, one blue solid diamond
-    // two green striped squiggles, one red striped squiggle, three blue empty diamonds
-    // two red solid diamonds, three green solid squiggles, two green solid squiggles
-  }, []);
-
-  const sendMessage = useCallback(
-    (type, payload = {}) => {
-      console.log("useWebsocket: sendMessage");
-      if (!ws) {
-        return;
-      }
-
-      ws.send(JSON.stringify({ type, payload }));
-    },
-    [ws]
-  );
-
-  const onClose = useCallback((e) => {
-    if (e.wasClean) {
-      console.info(
-        `[close] connection closed cleanly, code=${e.code}, reason=${e.reason}`
-      );
-    } else {
-      console.warn("[close] connection died");
-    }
-    setConnected(false);
-  }, []);
-
-  const close = useCallback(
-    (code, msg) => {
-      ws.close(code, msg);
-    },
-    [ws]
-  );
-
-  // useEffect to make sure the websocket exists before you try adding event handlers to it
-  useEffect(
-    function setOpenHandler() {
-      console.log("setOpenHandler");
-      if (!ws) {
-        return;
-      }
-      ws.addEventListener("open", (e) => {
-        console.info("[open] connection established");
-        setConnected(true);
-      });
-      return () => ws.removeEventListener("open");
-    },
-    [ws]
-  );
-
-  useEffect(
-    function setMessageHandler() {
-      console.log("setMessageHandler");
-      if (!ws) {
-        return;
-      }
-      ws.addEventListener("message", (e) => {
-        console.info(`[message]: ${e.data}`);
-        onMessage(JSON.parse(e.data));
-      });
-      return () => ws.removeEventListener("message");
-    },
-    [ws]
-  );
-
-  useEffect(
-    function setCloseHandler() {
-      console.log("setCloseHandler");
-      if (!ws) {
-        return;
-      }
-      ws.addEventListener("close", onClose);
-      return () => ws.removeEventListener("close");
-    },
-    [ws]
-  );
-
-  return [connect, sendMessage, close, connected];
-};
+const socketUrl = "ws://localhost:3001/ws";
 
 function App() {
+  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
+
+  });
+
+
+
   const [state, dispatch] = useReducer(reducer, {
     board: [],
     selected: [],
     players: null,
   });
-
-  const [connect, sendMessage, close, connected] = useWebsocket(dispatch);
 
   function reducer(state, { type, payload }) {
     const { board, selected } = state;
@@ -185,25 +100,22 @@ function App() {
     }
   }
 
-  useEffect(function roomEntered() {
-    console.info("useEffect: roomEntered");
-    connect();
-    return () => close(1000, "Done");
-  }, []);
-
   useEffect(
     function connectionEstablished() {
-      console.log("useEffect: connectionEstablished");
-
-      if (!connected) {
+      if (readyState != ReadyState.OPEN) {
+        console.log("[connectionEstablished] connection is not open");
         return;
       }
 
+      console.log("[connectionEstablished] connection is open");
       const { players } = state;
 
-      players === null && sendMessage("enterRoom");
+      players === null && sendJsonMessage({
+        type: "enterRoom",
+        payload: {}
+      });
     },
-    [connected]
+    [readyState]
   );
 
   useEffect(
