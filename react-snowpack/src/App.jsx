@@ -44,6 +44,9 @@ function App() {
   });
 
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
+    onOpen: (e) => {
+      console.log('[useWebSocket:onOpen] event: ', e);
+    },
     onMessage: (e) => {
       console.log('[useWebSocket:onMessage] event: ', e);
       dispatch(JSON.parse(e.data));
@@ -118,25 +121,6 @@ function App() {
     [readyState]
   );
 
-  // useEffect(
-  //   function joinGameIfPossible() {
-  //     const { players } = state;
-  //     console.log("[joinGameIfPossible] players = ", players);
-
-  //     if (players === null) {
-  //       return;
-  //     }
-
-  //     if (!(playerName in players) && Object.keys(players).length < MAX_PLAYERS) {
-  //       sendJsonMessage({
-  //         type: "joinRoom",
-  //         payload: { playerName }
-  //       });
-  //     }
-  //   },
-  //   [state.players]
-  // );
-
   useEffect(
     function cardSelected() {
       console.log("useEffect: cardSelected");
@@ -153,7 +137,10 @@ function App() {
     [state.selected]
   );
 
-  const onStartClicked = () => sendMessage("start");
+  const onStartClicked = () => sendJsonMessage({
+    type: 'start',
+    payload: {},
+  });
 
   const onCardClicked = (card) => {
     console.log("onCardClicked: ", card);
