@@ -1,5 +1,6 @@
 from collections import namedtuple
 import json
+import logging
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
 from starlette.routing import Mount, Route, WebSocketRoute
@@ -48,6 +49,7 @@ class SetGameApi(WebSocketEndpoint):
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
+        self.state.game = None
 
     @property
     def state(self):
@@ -59,7 +61,11 @@ class SetGameApi(WebSocketEndpoint):
 
     @property
     def game(self):
-        return getattr(self.state, "game", None)
+        return self.state.game
+
+    def create_game(self):
+        if self.game is None:
+            self.state.game = Game()
 
     async def on_connect(self, websocket):
         if 'seed' in websocket.query_params:
@@ -69,7 +75,6 @@ class SetGameApi(WebSocketEndpoint):
     async def on_receive(self, websocket, data):
         actions = {
             "enterRoom": self.handle_enter_room,
-            "joinRoom": self.handle_join_room,
             "start": self.handle_start,
             "submit": self.handle_submit,
             "find_set": self.handle_find_set,
@@ -79,7 +84,7 @@ class SetGameApi(WebSocketEndpoint):
         action_type = args["type"]
         if action_type not in actions.keys():
             # error handling
-            pass
+            raise ValueError("invalid action type: " + action_type)
 
         message = actions[action_type](**args["payload"])
         response = {"type": action_type, "payload": message.data}
@@ -94,18 +99,30 @@ class SetGameApi(WebSocketEndpoint):
         self.connections.disconnect(websocket)
 
     def handle_enter_room(self, **kwargs):
-        """Upon the user entering the room, we need to get the game state."""
-        if not self.game:
-            self.state.game = Game(seed=getattr(self.state, "seed", None))
+        if self.game is None:
+            self.create_game()
 
-        return Message(game_schema.dump(self.game))
-
-    def handle_join_room(self, **kwargs):
         try:
             self.game.add_player(kwargs["playerName"])
             return Message(game_schema.dump(self.game), broadcast=True)
         except ValueError as e:
             return Message({"error": e.args})
+
+    # def handle_enter_room1(self, **kwargs):
+    #     print(kwargs)
+
+    #     """Upon the user entering the room, we need to get the game state."""
+    #     if not self.game:
+    #         self.state.game = Game(seed=getattr(self.state, "seed", None))
+
+    #     return Message(game_schema.dump(self.game))
+
+    # def handle_join_room(self, **kwargs):
+    #     try:
+    #         self.game.add_player(kwargs["playerName"])
+    #         return Message(game_schema.dump(self.game), broadcast=True)
+    #     except ValueError as e:
+    #         return Message({"error": e.args})
 
     def handle_start(self, **kwargs):
         if self.game.is_started():

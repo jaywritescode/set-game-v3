@@ -37,24 +37,24 @@ const strToCard = (string) => {
 const socketUrl = "ws://localhost:3001/ws";
 
 function App() {
-  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
-
-  });
-
-
-
   const [state, dispatch] = useReducer(reducer, {
     board: [],
     selected: [],
     players: null,
   });
 
+  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
+    onMessage: (e) => {
+      console.log('[useWebSocket:onMessage] event: ', e);
+      dispatch(JSON.parse(e.data));
+    }
+  });
+
   function reducer(state, { type, payload }) {
     const { board, selected } = state;
 
     switch (type) {
-      case "enterRoom":
-      case "joinRoom": {
+      case "enterRoom": {
         return {
           ...state,
           ...payload,
@@ -112,28 +112,30 @@ function App() {
 
       players === null && sendJsonMessage({
         type: "enterRoom",
-        payload: {}
+        payload: { playerName }
       });
     },
     [readyState]
   );
 
-  useEffect(
-    function joinGameIfPossible() {
-      console.log("useEffect: joinGameIfPossible");
+  // useEffect(
+  //   function joinGameIfPossible() {
+  //     const { players } = state;
+  //     console.log("[joinGameIfPossible] players = ", players);
 
-      const { players } = state;
+  //     if (players === null) {
+  //       return;
+  //     }
 
-      if (players === null) {
-        return;
-      }
-
-      !(playerName in players) &&
-        Object.keys(players).length < MAX_PLAYERS &&
-        sendMessage("joinRoom", { playerName });
-    },
-    [state.players]
-  );
+  //     if (!(playerName in players) && Object.keys(players).length < MAX_PLAYERS) {
+  //       sendJsonMessage({
+  //         type: "joinRoom",
+  //         payload: { playerName }
+  //       });
+  //     }
+  //   },
+  //   [state.players]
+  // );
 
   useEffect(
     function cardSelected() {
