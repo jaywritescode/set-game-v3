@@ -45,12 +45,12 @@ function App() {
 
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
     onOpen: (e) => {
-      console.log('[useWebSocket:onOpen] event: ', e);
+      console.log("[useWebSocket:onOpen] event: ", e);
     },
     onMessage: (e) => {
-      console.log('[useWebSocket:onMessage] event: ', e);
+      console.log("[useWebSocket:onMessage] event: ", e);
       dispatch(JSON.parse(e.data));
-    }
+    },
   });
 
   function reducer(state, { type, payload }) {
@@ -97,9 +97,12 @@ function App() {
       const cardsToRemove = difference(prevBoard, newBoard);
       const cardsToAdd = difference(newBoard, prevBoard);
 
-      return concat(prevBoard.map((card) =>
-        cardsToRemove.includes(card) ? cardsToAdd.shift() : card
-      ), cardsToAdd);
+      return concat(
+        prevBoard.map((card) =>
+          cardsToRemove.includes(card) ? cardsToAdd.shift() : card
+        ),
+        cardsToAdd
+      );
     }
   }
 
@@ -113,10 +116,11 @@ function App() {
       console.log("[connectionEstablished] connection is open");
       const { players } = state;
 
-      players === null && sendJsonMessage({
-        type: "enterRoom",
-        payload: { playerName }
-      });
+      players === null &&
+        sendJsonMessage({
+          type: "enterRoom",
+          payload: { playerName },
+        });
     },
     [readyState]
   );
@@ -137,10 +141,11 @@ function App() {
     [state.selected]
   );
 
-  const onStartClicked = () => sendJsonMessage({
-    type: 'start',
-    payload: {},
-  });
+  const onStartClicked = () =>
+    sendJsonMessage({
+      type: "start",
+      payload: {},
+    });
 
   const onCardClicked = (card) => {
     console.log("onCardClicked: ", card);
@@ -156,7 +161,7 @@ function App() {
 
   const onFindSetClicked = () => {
     sendMessage("find_set");
-  }
+  };
 
   return (
     <>

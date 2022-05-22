@@ -64,12 +64,12 @@ class SetGameApi(WebSocketEndpoint):
         return self.state.game
 
     def init_game(self):
-        if not hasattr(self.state, 'game'):
+        if not hasattr(self.state, "game"):
             self.state.game = Game()
 
     async def on_connect(self, websocket):
-        if 'seed' in websocket.query_params:
-            self.state.seed = int(websocket.query_params['seed'])
+        if "seed" in websocket.query_params:
+            self.state.seed = int(websocket.query_params["seed"])
         await self.connections.accept(websocket)
 
     async def on_receive(self, websocket, data):

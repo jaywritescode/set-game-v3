@@ -2,7 +2,8 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "web-test-runner \"src/**/*.test.jsx\" --node-resolve"
+    "test": "web-test-runner \"src/**/*.test.jsx\" --node-resolve",
+    "pretty": "npx prettier --write ."
   },
   "devDependencies": {
     "@snowpack/plugin-react-refresh": "^2.5.0",
