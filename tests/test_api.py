@@ -14,16 +14,40 @@ def sample_game(shuffled_deck):
     game.reset()
 
 
-def test_enter_room_empty():
+def test_enter_room_as_first_player():
     client = TestClient(app)
-    with client.websocket_connect("/") as ws:
-        ws.send_json({"type": "enterRoom", "payload": {}})
+    with client.websocket_connect("/ws") as ws:
+        ws.send_json(
+            {"type": "enterRoom", "payload": {"playerName": "happy-jackrabbit"}}
+        )
         assert_that(app.state.connections.active_connections).is_length(1)
 
         data = ws.receive_json()
         assert_that(data).is_equal_to(
-            {"type": "enterRoom", "payload": {"board": [], "players": {}}}
+            {
+                "type": "enterRoom",
+                "payload": {"board": [], "players": {"happy-jackrabbit": []}},
+            }
         )
+
+def test_enter_room_as_second_player():
+    client = TestClient(app)
+    with client.websocket_connect("/ws") as ws1:
+        ws1.send_json(
+            {"type": "enterRoom", "payload": {"playerName": "happy-jackrabbit"}}
+        )
+        ws1.receive_json()  # ignore for test purposes
+
+        with client.websocket_connect("/ws") as ws2:
+            ws2.send_json(
+                {"type": "enterRoom", "payload": {"playerName": "charming-yeti"}}
+            )
+            assert_that(app.state.connections.active_connections).is_length(2)
+
+            data1 = ws1.receive_json()
+            data2 = ws2.receive_json()
+            assert_that(data1['payload']).has_players({"happy-jackrabbit": [], "charming-yeti": []})
+            assert_that(data2['payload']).has_players({"happy-jackrabbit": [], "charming-yeti": []})
 
 
 def test_enter_room_game_in_progress(sample_game):
@@ -116,54 +140,6 @@ def test_enter_room_game_in_progress(sample_game):
             assert_that(data["payload"]["players"]).is_equal_to(
                 {"louis": [], "tom": []}
             )
-
-
-def test_join_room_no_players():
-    client = TestClient(app)
-    with client.websocket_connect("/") as ws:
-        ws.send_json({"type": "enterRoom", "payload": {}})
-        ws.receive_json()
-
-        ws.send_json({"type": "joinRoom", "payload": {"playerName": "todd"}})
-        data = ws.receive_json()
-        assert_that(app.state.game.players).contains("todd")
-        assert_that(data).is_equal_to(
-            {"type": "joinRoom", "payload": {"board": [], "players": {"todd": []}}}
-        )
-
-
-def test_join_room_with_multiple_players():
-    client = TestClient(app)
-    with client.websocket_connect("/") as ws:
-        ws.send_json({"type": "enterRoom", "payload": {}})
-        ws.receive_json()
-        ws.send_json({"type": "joinRoom", "payload": {"playerName": "todd"}})
-        ws.receive_json()
-
-        ws.send_json({"type": "enterRoom", "payload": {}})
-        ws.receive_json()
-        ws.send_json({"type": "joinRoom", "payload": {"playerName": "larry"}})
-        ws.receive_json()
-
-        ws.send_json({"type": "enterRoom", "payload": {}})
-        ws.receive_json()
-        ws.send_json({"type": "joinRoom", "payload": {"playerName": "frank"}})
-        data = ws.receive_json()
-
-        assert_that(app.state.game.players).contains("todd", "larry", "frank")
-        assert_that(data).is_equal_to(
-            {
-                "type": "joinRoom",
-                "payload": {
-                    "board": [],
-                    "players": {
-                        "todd": [],
-                        "larry": [],
-                        "frank": [],
-                    },
-                },
-            }
-        )
 
 
 def test_start_game(sample_game):
