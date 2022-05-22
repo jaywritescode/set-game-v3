@@ -49,7 +49,7 @@ class SetGameApi(WebSocketEndpoint):
 
     def __init__(self, scope, receive, send):
         super().__init__(scope, receive=receive, send=send)
-        self.state.game = None
+        self.init_game()
 
     @property
     def state(self):
@@ -63,8 +63,8 @@ class SetGameApi(WebSocketEndpoint):
     def game(self):
         return self.state.game
 
-    def create_game(self):
-        if self.game is None:
+    def init_game(self):
+        if not hasattr(self.state, 'game'):
             self.state.game = Game()
 
     async def on_connect(self, websocket):
@@ -99,30 +99,11 @@ class SetGameApi(WebSocketEndpoint):
         self.connections.disconnect(websocket)
 
     def handle_enter_room(self, **kwargs):
-        if self.game is None:
-            self.create_game()
-
         try:
             self.game.add_player(kwargs["playerName"])
             return Message(game_schema.dump(self.game), broadcast=True)
         except ValueError as e:
             return Message({"error": e.args})
-
-    # def handle_enter_room1(self, **kwargs):
-    #     print(kwargs)
-
-    #     """Upon the user entering the room, we need to get the game state."""
-    #     if not self.game:
-    #         self.state.game = Game(seed=getattr(self.state, "seed", None))
-
-    #     return Message(game_schema.dump(self.game))
-
-    # def handle_join_room(self, **kwargs):
-    #     try:
-    #         self.game.add_player(kwargs["playerName"])
-    #         return Message(game_schema.dump(self.game), broadcast=True)
-    #     except ValueError as e:
-    #         return Message({"error": e.args})
 
     def handle_start(self, **kwargs):
         if self.game.is_started():
