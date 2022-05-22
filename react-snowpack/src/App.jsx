@@ -132,9 +132,12 @@ function App() {
       const { selected } = state;
 
       if (selected.length == 3) {
-        sendMessage("submit", {
-          cards: selected.map(strToCard),
-          player: playerName,
+        sendJsonMessage({
+          type: 'submit',
+          payload: {
+            cards: selected.map(strToCard),
+            player: playerName,
+          },
         });
       }
     },
@@ -159,15 +162,9 @@ function App() {
     });
   };
 
-  const onFindSetClicked = () => {
-    sendMessage("find_set");
-  };
-
   return (
     <>
       {state.players && <Players players={state.players} myName={playerName} />}
-
-      <button onClick={onFindSetClicked}>find set</button>
 
       <div className={classNames("board", "container")}>
         {isEmpty(state.board) ? (
