@@ -50,6 +50,42 @@ def test_enter_room_as_second_player():
             assert_that(data2['payload']).has_players({"happy-jackrabbit": [], "charming-yeti": []})
 
 
+def test_start_broadcasts_game_to_all_players(sample_game):
+    app.state.game = sample_game
+
+    client = TestClient(app)
+    with client.websocket_connect("/ws") as ws1:
+        ws1.send_json(
+            {"type": "enterRoom", "payload": {"playerName": "happy-jackrabbit"}}
+        )
+        ws1.receive_json()  # ignore for test purposes
+
+        with client.websocket_connect("/ws") as ws2:
+            ws2.send_json(
+                {"type": "enterRoom", "payload": {"playerName": "charming-yeti"}}
+            )
+            ws1.receive_json()  # ignore for test purposes
+            ws2.receive_json()  # ignore for test purposes
+
+            ws2.send_json(
+                {"type": "start", "payload": {}}
+            )
+
+            data1 = ws1.receive_json()
+            data2 = ws2.receive_json()
+            
+            assert_that(data1['payload']['board']).is_length(12)
+            assert_that(data2['payload']['board']).is_length(12)
+
+
+
+
+
+
+
+
+
+
 def test_enter_room_game_in_progress(sample_game):
     app.state.game = sample_game
     app.state.game.add_player("louis")
@@ -141,93 +177,3 @@ def test_enter_room_game_in_progress(sample_game):
                 {"louis": [], "tom": []}
             )
 
-
-def test_start_game(sample_game):
-    app.state.game = sample_game
-    app.state.game.add_player("doug")
-    app.state.game.add_player("gene")
-
-    client = TestClient(app)
-    with client.websocket_connect("/") as ws:
-        ws.send_json({"type": "start", "payload": {}})
-        data = ws.receive_json()
-
-        with soft_assertions():
-            assert_that(data).has_type("start")
-            assert_that(data["payload"]["board"]).contains_only(
-                {
-                    "number": "THREE",
-                    "color": "GREEN",
-                    "shading": "SOLID",
-                    "shape": "OVAL",
-                },
-                {
-                    "number": "ONE",
-                    "color": "RED",
-                    "shading": "EMPTY",
-                    "shape": "SQUIGGLE",
-                },
-                {
-                    "number": "THREE",
-                    "color": "RED",
-                    "shading": "EMPTY",
-                    "shape": "OVAL",
-                },
-                {
-                    "number": "TWO",
-                    "color": "BLUE",
-                    "shading": "STRIPED",
-                    "shape": "DIAMOND",
-                },
-                {
-                    "number": "TWO",
-                    "color": "GREEN",
-                    "shading": "SOLID",
-                    "shape": "DIAMOND",
-                },
-                {
-                    "number": "TWO",
-                    "color": "GREEN",
-                    "shading": "SOLID",
-                    "shape": "SQUIGGLE",
-                },
-                {
-                    "number": "ONE",
-                    "color": "RED",
-                    "shading": "SOLID",
-                    "shape": "SQUIGGLE",
-                },
-                {
-                    "number": "ONE",
-                    "color": "GREEN",
-                    "shading": "EMPTY",
-                    "shape": "SQUIGGLE",
-                },
-                {
-                    "number": "TWO",
-                    "color": "GREEN",
-                    "shading": "EMPTY",
-                    "shape": "OVAL",
-                },
-                {
-                    "number": "ONE",
-                    "color": "BLUE",
-                    "shading": "SOLID",
-                    "shape": "DIAMOND",
-                },
-                {
-                    "number": "THREE",
-                    "color": "RED",
-                    "shading": "SOLID",
-                    "shape": "OVAL",
-                },
-                {
-                    "number": "ONE",
-                    "color": "RED",
-                    "shading": "SOLID",
-                    "shape": "DIAMOND",
-                },
-            )
-            assert_that(data["payload"]["players"]).is_equal_to(
-                {"doug": [], "gene": []}
-            )
