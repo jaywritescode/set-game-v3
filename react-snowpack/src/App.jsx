@@ -90,7 +90,6 @@ function App() {
           players: payload.players,
           game_over: payload.game_over,
         };
-      }
     }
 
     function updateBoard(prevBoard, newBoard) {
