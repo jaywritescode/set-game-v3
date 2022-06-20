@@ -12,3 +12,4 @@ class GameSchema(Schema):
     players = fields.Dict(
         keys=fields.Str(), values=fields.List(fields.List(fields.Nested(CardSchema)))
     )
+    game_over = fields.Boolean()

@@ -41,6 +41,7 @@ function App() {
     board: [],
     selected: [],
     players: null,
+    game_over: false,
   });
 
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
@@ -87,10 +88,9 @@ function App() {
           board: updateBoard(board, payload.board.map(cardToStr)),
           selected: [],
           players: payload.players,
+          game_over: payload.game_over,
         };
-      case "find_set":
-        console.log(payload.map(cardToStr));
-        return state;
+      }
     }
 
     function updateBoard(prevBoard, newBoard) {
